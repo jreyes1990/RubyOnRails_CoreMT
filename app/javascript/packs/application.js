@@ -25,6 +25,8 @@ import "datatables.net-rowgroup-bs4/js/rowGroup.bootstrap4";
 import "bootstrap-tooltip-custom-class/bootstrap-v4/popover/dist/css/bootstrap-popover-custom-class";
 import "bootstrap-tooltip-custom-class/bootstrap-v4/tooltip/dist/css/bootstrap-tooltip-custom-class";
 
+// import "sweetalert2/dist/sweetalert2";
+
 import {
     left
 } from '@popperjs/core'

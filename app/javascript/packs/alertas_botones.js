@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+
 document.addEventListener("turbolinks:load", function () {
 
     /**
@@ -31,24 +32,39 @@ document.addEventListener("turbolinks:load", function () {
         });
     }
 
-    function confirmSave(btnClass, title, confirmButtonText, accion = 'guardar') {
+    function confirmSave(btnClass, title, confirmButtonText, cancelButtonText, accion = 'guardar') {
         $(document).on('click', btnClass, function (e) {
             e.preventDefault();
-            let config = {
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                  confirmButton: "btn btn-success",
+                  cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false,
+                didOpen: () => {
+                    // Aplicar margen a los botones directamente cuando el modal se abre
+                    const buttons = document.querySelectorAll('.swal2-confirm, .swal2-cancel');
+                    buttons.forEach(button => {
+                        button.style.margin = '0 5px';
+                    });
+                }
+            });
+            swalWithBootstrapButtons.fire({
                 title: title,
                 text: '¿Estás seguro de ' + accion + '?',
-                icon: 'warning',
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: '#008000',
-                cancelButtonColor: '#FF0000',
-                confirmButtonText: confirmButtonText
-            }
-            Swal.fire(config).then((result) => {
+                confirmButtonText: confirmButtonText,
+                cancelButtonText: cancelButtonText,
+                reverseButtons: true
+            }).then((result) => {
                 if (result.isConfirmed) {
                     // Encuentra el formulario más cercano y lo envía
                     $(this).closest('form').submit();
                 }
             });
+              
         });
     }
 
@@ -67,11 +83,6 @@ document.addEventListener("turbolinks:load", function () {
     confirmStatus('.btn_inactivar_parametro', 'Inactivar Parámetro', '¡Sí, inactivarlo!');
     confirmStatus('.btn_activar_parametro', 'Activar Parámetro', '¡Sí, Activarlo!', 'activar');
     
-
-    confirmSave('.btn_guardar_inventarios', 'Guardar Inventario', '¡Sí, Guardarlo!');
-
-    confirmSave('.btn_guardar_inventarios', 'Guardar Inventario', '¡Sí, Guardarlo!');
-
-    confirmSave('#btn_add_empresa', 'Guardar Empresa', 'Sí');
+    confirmSave('#btn_add_empresa', 'Guardar Empresa', 'Sí, Aplicar', 'No, Cancelar');
 
 });
