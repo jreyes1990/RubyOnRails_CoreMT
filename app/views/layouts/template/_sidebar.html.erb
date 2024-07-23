@@ -22,12 +22,7 @@
           codigo: opcion.menu_id,
           class_badge: "badge badge-success",
           sub_opcion_id: opcion.sub_opcion_id,
-          sub_opcion: opcion.nombre_sub_opcion,
-          registros: begin
-            opcion.controlador.classify.constantize.count
-          rescue NameError
-            0
-          end
+          sub_opcion: opcion.nombre_sub_opcion
         }
       end
     }
@@ -83,11 +78,6 @@
                     <i class="<%= opcion[:class] %>"></i>
                     <span>
                       <%= opcion[:text] %> 
-                      <!--
-                      <span class="<= opcion[:class_badge] %>">
-                      <= opcion[:registros] %>
-                      </span>
-                      -->
                     </span>
                   <% end %>
                 <% end %>
