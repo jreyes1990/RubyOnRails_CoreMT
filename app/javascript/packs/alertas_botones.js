@@ -33,39 +33,39 @@ document.addEventListener("turbolinks:load", function () {
     }
 
     function confirmSave(btnClass, title, confirmButtonText, cancelButtonText, accion = 'guardar') {
-        $(document).on('click', btnClass, function (e) {
-            e.preventDefault();
+      $(document).on('click', btnClass, function (e) {
+        e.preventDefault();
+        var nombre = this.dataset.nombre;
 
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                  confirmButton: "btn btn-success",
-                  cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false,
-                didOpen: () => {
-                    // Aplicar margen a los botones directamente cuando el modal se abre
-                    const buttons = document.querySelectorAll('.swal2-confirm, .swal2-cancel');
-                    buttons.forEach(button => {
-                        button.style.margin = '0 5px';
-                    });
-                }
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+          },
+          buttonsStyling: false,
+          didOpen: () => {
+            // Aplicar margen a los botones directamente cuando el modal se abre
+            const buttons = document.querySelectorAll('.swal2-confirm, .swal2-cancel');
+            buttons.forEach(button => {
+              button.style.margin = '0 5px';
             });
-            swalWithBootstrapButtons.fire({
-                title: title,
-                text: '¿Estás seguro de ' + accion + '?',
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: confirmButtonText,
-                cancelButtonText: cancelButtonText,
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Encuentra el formulario más cercano y lo envía
-                    $(this).closest('form').submit();
-                }
-            });
-              
+          }
         });
+        swalWithBootstrapButtons.fire({
+          title: title,
+          text: '¿Estás seguro de ' + nombre + ' ?',
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: confirmButtonText + nombre,
+          cancelButtonText: cancelButtonText,
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Encuentra el formulario más cercano y lo envía
+            $(this).closest('form').submit();
+          }
+        });
+      });
     }
 
     confirmStatus('.btn-inactivar-usuario', 'Inactivar Usuario', '¡Sí, inactivarlo!');
@@ -83,6 +83,6 @@ document.addEventListener("turbolinks:load", function () {
     confirmStatus('.btn_inactivar_parametro', 'Inactivar Parámetro', '¡Sí, inactivarlo!');
     confirmStatus('.btn_activar_parametro', 'Activar Parámetro', '¡Sí, Activarlo!', 'activar');
     
-    confirmSave('#btn_add_empresa', 'Guardar Empresa', 'Sí, Aplicar', 'No, Cancelar');
+    confirmSave('#btn_add_empresa', 'Aplicar Cambios', 'Sí, ', 'No, Cancelar');
 
 });

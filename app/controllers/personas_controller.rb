@@ -1,7 +1,7 @@
 class PersonasController < ApplicationController
   before_action :set_persona, only: [:show, :edit, :update, :destroy]
   #before_action :comprobar_permiso
- 
+
   def show
       @empresa = Empresa.joins("inner join areas on empresas.id = areas.empresa_id
                                 inner join personas_areas on personas_areas.area_id = areas.id
@@ -26,27 +26,34 @@ class PersonasController < ApplicationController
         elsif @nombresAreas == ""
         @nombresAreas = @nombresAreas + a.nombre + ','
         else
-        @nombresAreas = @nombresAreas+ ', ' + a.nombre 
+        @nombresAreas = @nombresAreas+ ', ' + a.nombre
         end
         @nombresAreas.sub!(',,', ',')
 
-        end 
+        end
       end
 
   def edit
   end
-  
+
   #Proceso para actualizar una persona
   def update
+    image_data = params[:persona][:foto]
+
+    if image_data.present?
+      resized_image = resize_image(image_data, 300, 180)  # Tamaño deseado: 800x600
+      @persona.foto = convert_to_clob(resized_image)
+    end
+
     respond_to do |format|
       if @persona.update(persona_params)
         format.html { redirect_to @persona, notice: 'Persona modficada' }
         format.json { render :show, status: :ok, location: @persona }
-      
+
       else
         format.html { render :edit }
         format.json { render json: @persona.errors, status: :unprocessable_entity }
-        
+
       end
     end
   end
@@ -56,11 +63,11 @@ class PersonasController < ApplicationController
       @personas = Persona.find(params[:id])
       @personas.user_updated_id = current_user.id
       @personas.estado = "I"
-      
+
       respond_to do |format|
         if @personas.save
             @usuario = User.find(@personas.user_id)
-            
+
             @usuario.estado = "I"
             @usuario.user_updated_id = current_user.id
             if @usuario.save
@@ -85,32 +92,32 @@ class PersonasController < ApplicationController
         format.html
         format.js
       end
-    end 
+    end
 
-    def registrar_cambio_contrasena   
+    def registrar_cambio_contrasena
       contrasena_nueva = params[:cambio_contrasena_form][:password_nueva]
       confirma_contrasena = params[:cambio_contrasena_form][:password_confirmada]
-      @user = User.find(current_user.id)        
+      @user = User.find(current_user.id)
 
       respond_to do |format|
-          if contrasena_nueva == confirma_contrasena     
-            contrasena_nueva_encriptada = BCrypt::Password.create(contrasena_nueva)     
+          if contrasena_nueva == confirma_contrasena
+            contrasena_nueva_encriptada = BCrypt::Password.create(contrasena_nueva)
               @user.encrypted_password = contrasena_nueva_encriptada
-              
+
               if @user.save
                 format.html { redirect_to persona_path(current_user.persona), notice: "Contraseña actualizada correctamente." }
                 format.json { render :show, status: :created, location: @user }
-              else 
+              else
                 format.html { redirect_to persona_path(current_user.persona), alert: "Error al actualizar la contraseña." }
                 format.json { render :show, status: :created, location: @user }
-              end 
-          else 
+              end
+          else
             format.html { redirect_to persona_path(current_user.persona), alert: "Las nueva contraseña y la confirmación no coinciden, intente de nuevo." }
-            format.json { render :show, status: :created, location: @user }            
-          end 
-      end 
-    end 
-  
+            format.json { render :show, status: :created, location: @user }
+          end
+      end
+    end
+
     def generate_token
       loop do
           token = SecureRandom.hex
@@ -119,17 +126,17 @@ class PersonasController < ApplicationController
     end
 
     def registrar_token_persona
-      
+
       validacion = params[:validacion]
       persona = Persona.find(params[:persona_id])
-          if validacion == "ACTIVAR" 
-            token = generate_token         
+          if validacion == "ACTIVAR"
+            token = generate_token
             persona.token = token
           else validacion == "DESACTIVAR"
             persona.token = ""
-          end 
+          end
 
-        respond_to do |format|              
+        respond_to do |format|
           if persona.save
             genera_bitacora_movil("GESTION_TOKEN", params[:persona_id], "" , "SE PROCEDE A #{validacion}, TOKEN PARA APLICACIÓN MÓVIL", token)
             format.html { redirect_to persona_path(current_user.persona), notice: "Token para Aplicación Móvil Actualizado correctamente." }
@@ -137,9 +144,9 @@ class PersonasController < ApplicationController
           else
             format.html { redirect_to persona_path(current_user.persona), notice: "Error al generar token para aplicación Móvil." }
             format.json { render :show, status: :created, location: persona }
-        end 
-      end 
-    end 
+        end
+      end
+    end
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -10,13 +10,22 @@
             <div class="card">
               <div class="card-body">
                 <div class="d-flex flex-column align-items-center text-center">
-                  <img src="<%= @persona.foto.url%>" alt="Admin" class="rounded-circle" width="240" height="240">
+                  <%  
+                    if @persona.foto.present?
+                      @foto_persona = @persona.foto
+                    else
+                      @foto_persona = "default.jpg"
+                    end 
+                  %>
+
+                  <img src="<%= @foto_persona %>" alt="Admin" class="rounded-circle" width="150" height="150">
+                  <h4><%= @persona.nombre_completo %></h4>
                     <br>
                     <div class="forms-group">
-                      <%= f.file_field :foto, {:class => "form-control col-md-12"}%>
-                      <% if @persona.errors[:imagen].any?%>
-                      <p class="bg-danger"><%= @persona.errors[:foto].to_s[/\w([^"]*)/]%> </p>
-                      <% end %>
+                      <div class="custom-file">
+                        <%= f.file_field :foto, :class => "custom-file-input", id: "customFile", accept: 'image/jpeg,image/gif,image/png' %>
+                        <label class="custom-file-label" for="customFile">Busca una foto</label>
+                      </div>
                     </div>
                 </div>
               </div>

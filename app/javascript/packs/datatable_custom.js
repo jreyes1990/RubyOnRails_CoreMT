@@ -6,6 +6,8 @@ document.addEventListener("turbolinks:load", () => {
     infoEmpty: "No hay registros disponibles",
     infoFiltered: "(resultados filtrados de _MAX_ en total)",
     search: "",
+    sProcessing: "Procesando...",
+    sLoadingRecords: "Cargando...",
     paginate: {
       first: "Inicio",
       previous: "Anterior",
@@ -95,6 +97,7 @@ document.addEventListener("turbolinks:load", () => {
         language: options.language,
         responsive: options.responsive,
         lengthChange: options.lengthChange,
+        lengthMenu: options.lengthMenu,
         select: options.select,
         buttons: options.buttons,
         drawCallback: function (settings) {
@@ -201,6 +204,7 @@ document.addEventListener("turbolinks:load", () => {
       language: options.language,
       responsive: options.responsive,
       lengthChange: options.lengthChange,
+      lengthMenu: options.lengthMenu,
       select: options.select,
       buttons: options.buttons,
       drawCallback: function (settings) {
@@ -219,6 +223,11 @@ document.addEventListener("turbolinks:load", () => {
     language: espanol,
     responsive: true,
     lengthChange: true,
+    lengthMenu: [
+      // Define las opciones de cantidad de registros por página en el menú desplegable.
+      [5, 10, 15, 20, 25, 50, -1],      // Opciones de cantidad de registros.
+      [5, 10, 15, 20, 25, 50, 'Todos'], // Etiquetas que se muestran en el menú desplegable.
+    ],
     select: true,
     buttons: btnDescarga,
     initComplete: true,

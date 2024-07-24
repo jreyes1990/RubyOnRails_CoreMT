@@ -59,21 +59,36 @@ class EmpresasController < ApplicationController
     end
   end
 
-# Inactivar empresa
   def inactivar_empresa
     @empresa = Empresa.find(params[:id])
     @empresa.user_updated_id = current_user.id
     @empresa.estado = "I"
+
     respond_to do |format|
       if @empresa.save
-        format.html { redirect_to empresas_path, notice: "Empresa Inctivada" }
+        format.html { redirect_to empresas_url, notice: "La Empresa <strong>#{@empresa.codigo_empresa}: #{@empresa.nombre}</strong> ha sido Inactivado.".html_safe }
         format.json { render :show, status: :created, location: @empresa }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { redirect_to empresas_url, alert: "Ocurrio un error al inactivar la empresa, Verifique!!.." }
         format.json { render json: @empresa.errors, status: :unprocessable_entity }
       end
     end
+  end
 
+  def activar_empresa
+    @empresa = Empresa.find(params[:id])
+    @empresa.user_updated_id = current_user.id
+    @empresa.estado = "A"
+
+    respond_to do |format|
+      if @empresa.save
+        format.html { redirect_to empresas_url, notice: "La Empresa <strong>#{@empresa.codigo_empresa}: #{@empresa.nombre}</strong> ha sido Activado.".html_safe }
+        format.json { render :show, status: :created, location: @empresa }
+      else
+        format.html { redirect_to empresas_url, alert: "Ocurrio un error al Activar la empresa, Verifique!!.." }
+        format.json { render json: @empresa.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
 
@@ -85,6 +100,6 @@ class EmpresasController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def empresa_params
-      params.require(:empresa).permit(:nombre, :descripcion, :codigo_empresa)
+      params.require(:empresa).permit(Empresa.attribute_names.map(&:to_sym))
     end
 end
