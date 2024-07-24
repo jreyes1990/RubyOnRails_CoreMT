@@ -39,21 +39,31 @@ class PersonasController < ApplicationController
   #Proceso para actualizar una persona
   def update
     image_data = params[:persona][:foto]
+    
 
     if image_data.present?
       resized_image = resize_image(image_data, 300, 180)  # Tamaño deseado: 800x600
       @persona.foto = convert_to_clob(resized_image)
+      puts "DATO DE LA FOTO: #{@persona.foto.inspect}"
     end
 
     respond_to do |format|
-      if @persona.update(persona_params)
-        format.html { redirect_to @persona, notice: 'Persona modficada' }
-        format.json { render :show, status: :ok, location: @persona }
-
+      if image_data.present?
+        if @persona.save
+          format.html { redirect_to @persona, notice: 'La imagen de la persona se ha creado correctamente' }
+          format.json { render :show, status: :ok, location: @persona }
+        else
+          format.html { render :edit }
+          format.json { render json: @persona.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render :edit }
-        format.json { render json: @persona.errors, status: :unprocessable_entity }
-
+        if @persona.update(persona_params)
+          format.html { redirect_to @persona, notice: 'Persona modficada' }
+          format.json { render :show, status: :ok, location: @persona }
+        else
+          format.html { render :edit }
+          format.json { render json: @persona.errors, status: :unprocessable_entity }
+        end
       end
     end
   end

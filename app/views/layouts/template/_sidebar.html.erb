@@ -36,13 +36,9 @@
   <a class="sidebar-brand d-flex align-items-center justify-content-center mb-3 mt-3">
     <div class="sidebar-brand-icon rotate-n-90">
       <%  
-        if current_user.persona.foto.present?
-          @foto_persona = current_user.persona.foto
-        else
-          @foto_persona = "default.jpg"
-        end 
+        @foto_persona = current_user.persona.foto.presence || image_path('default.jpg')
       %>
-      <img class="img-profile rounded-circle" src="<%= @foto_persona %>" style="border: 2px solid white;" width="70" height="70" alt="dfdfdf">
+      <img class="img-profile rounded-circle" src="<%= @foto_persona %>" style="border: 2px solid white;" width="70" height="70">
       <br>
       <span class="sidebar-brand-text mx-3" style="font-size: 50%;"><%= current_user.email %></span>
     </div>

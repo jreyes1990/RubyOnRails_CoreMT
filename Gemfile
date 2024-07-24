@@ -35,7 +35,7 @@ gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
- gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 
 #Generación de reportes PDF
 gem 'wicked_pdf'
@@ -54,7 +54,7 @@ gem 'devise-security'
 
 gem 'wdm', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-#Usa para manejo de fotografias
+# Uso para manejo de fotografias,  Enlace:  https://github.com/carrierwaveuploader/carrierwave
 gem 'carrierwave'
 
 #Usa para pasar variables de controlador a javascript
@@ -104,7 +104,13 @@ gem 'ed25519', '>= 1.2', '< 2.0'
 gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
 gem 'scenic-oracle_adapter'
 
+# Use Active Storage variant
+gem 'image_processing', '~> 1.2'
+# GEMA PARA IMAGEN
 gem 'mini_magick'
+
+# Leer correos electronicos sin tener que enviarlos
+gem "letter_opener", group: :development
 
 #GEMAS PARA GENERACION DE EXCELES
 gem 'caxlsx'

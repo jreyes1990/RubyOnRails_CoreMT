@@ -15,7 +15,10 @@
                 <br>
                 <br>
                 <br>
-                <img src="<%= @persona.foto.url%>" alt="Admin" class="rounded-circle" width="150" height="150">
+                <%  
+                  @foto_persona = current_user.persona.foto.presence || image_path('default.jpg')
+                %>
+                <img class="img-profile rounded-circle" src="<%= @foto_persona %>" style="border: 2px solid white;" width="150" height="150">
                 <div class="mt-3">
                   <br>
                   <h4><%= @persona.nombre_completo %></h4>

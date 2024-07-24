@@ -85,13 +85,10 @@
           <%= "#{current_nombre_area_controller} / " "#{current_nombre_area_empresa_controller}"%>
         </span>
         <!-- <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= "#{current_user_name} / " "#{current_nombre_area_controller}" %></span> -->
-        <% if current_user.persona.foto.present? %>
-          <img class="img-profile rounded-circle" src="<%= current_user.persona.foto.url %>">
-        <% else %>
-          <img class="img-profile rounded-circle" src="<%= asset_path('default.jpg') %>">
-        <% end %>
-        <%# <img class="img-profile rounded-circle"
-                                    src="<%= current_user.persona.foto.url%>
+        <%  
+          @foto_persona = current_user.persona.foto.presence || asset_path('default.jpg')
+        %>
+        <img class="img-profile rounded-circle" src="<%= @foto_persona %>">
       </a>
       <!-- Dropdown - User Information -->
       <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

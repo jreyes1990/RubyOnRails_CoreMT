@@ -1,7 +1,7 @@
 module Utilidades
   require 'mini_magick'
-
   public
+  
   def current_area_id_parametro
     parametros_area = Parametro.where(:user_id => current_user.id).first
     if (parametros_area != nil) then
@@ -173,6 +173,14 @@ module Utilidades
       respuesta = 'No'
     elsif valor == 'S'
       respuesta = 'Si'
+    end
+
+    return respuesta
+  end
+
+  def format_digitos(correlativo, formato)
+    if !correlativo.nil?
+      respuesta = correlativo.to_s.rjust(formato,"0")
     end
 
     return respuesta

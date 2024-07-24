@@ -106,6 +106,7 @@ GEM
     caxlsx_rails (0.6.3)
       actionpack (>= 3.1)
       caxlsx (>= 3.0)
+    childprocess (5.0.0)
     chromedriver-helper (1.2.0)
       archive-zip (~> 0.10)
       nokogiri (~> 1.8)
@@ -171,6 +172,11 @@ GEM
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
+    launchy (3.0.1)
+      addressable (~> 2.8)
+      childprocess (~> 5.0)
+    letter_opener (1.10.0)
+      launchy (>= 2.2, < 4)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -402,7 +408,9 @@ DEPENDENCIES
   ed25519 (>= 1.2, < 2.0)
   gon
   guard-livereload
+  image_processing (~> 1.2)
   jbuilder (~> 2.7)
+  letter_opener
   listen (~> 3.2)
   mini_magick
   net-http

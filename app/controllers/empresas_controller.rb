@@ -1,10 +1,11 @@
 class EmpresasController < ApplicationController
+  include ManageStatus
   before_action :set_empresa, only: %i[ show edit update destroy ]
   before_action :comprobar_permiso
 
   # GET /empresas or /empresas.json
   def index
-    @empresas = Empresa.where(:estado => 'A').order(:id)
+    @empresas = Empresa.where(estado: 'A').order(:id)
   end
 
   # GET /empresas/1 or /empresas/1.json
@@ -25,6 +26,7 @@ class EmpresasController < ApplicationController
     @empresa = Empresa.new(empresa_params)
     @empresa.estado = "A"
     @empresa.user_created_id = current_user.id
+    
     respond_to do |format|
       if @empresa.save
         format.html { redirect_to empresas_path, notice: "Empresa Creada" }
@@ -60,37 +62,12 @@ class EmpresasController < ApplicationController
   end
 
   def inactivar_empresa
-    @empresa = Empresa.find(params[:id])
-    @empresa.user_updated_id = current_user.id
-    @empresa.estado = "I"
-
-    respond_to do |format|
-      if @empresa.save
-        format.html { redirect_to empresas_url, notice: "La Empresa <strong>#{@empresa.codigo_empresa}: #{@empresa.nombre}</strong> ha sido Inactivado.".html_safe }
-        format.json { render :show, status: :created, location: @empresa }
-      else
-        format.html { redirect_to empresas_url, alert: "Ocurrio un error al inactivar la empresa, Verifique!!.." }
-        format.json { render json: @empresa.errors, status: :unprocessable_entity }
-      end
-    end
+    change_status_to('I', Empresa, empresas_url, params[:id])
   end
 
   def activar_empresa
-    @empresa = Empresa.find(params[:id])
-    @empresa.user_updated_id = current_user.id
-    @empresa.estado = "A"
-
-    respond_to do |format|
-      if @empresa.save
-        format.html { redirect_to empresas_url, notice: "La Empresa <strong>#{@empresa.codigo_empresa}: #{@empresa.nombre}</strong> ha sido Activado.".html_safe }
-        format.json { render :show, status: :created, location: @empresa }
-      else
-        format.html { redirect_to empresas_url, alert: "Ocurrio un error al Activar la empresa, Verifique!!.." }
-        format.json { render json: @empresa.errors, status: :unprocessable_entity }
-      end
-    end
+    change_status_to('A', Empresa, empresas_url, params[:id])
   end
-
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -1,44 +1,21 @@
 # app/controllers/concerns/manage_status.rb
 module ManageStatus
   extend ActiveSupport::Concern
+  include Utilidades  
 
-  def change_status_to(status_description, model, process_desc, redirect_to_path, params_id)
+  def change_status_to(status_description, model, redirect_to_path, params_id)
     record = model.find(params_id)
-    state_info = EstadoXProcesoView.where("id_empresa = ? and upper(desc_proceso)=? and upper(desc_estado) =?", record.id_empresa, process_desc, status_description).first
 
     record.user_updated_id = current_user.id
-    if state_info.present?
-      record.estado_x_proceso_id = state_info.id
-    end
+    record.estado = status_description
 
     respond_to do |format|
-      if state_info.present?
-        if record.save
-          if params_id != params[:id] 
-            flash[:success] = "El registro se ha cambiado a #{status_description.downcase}"
-            format.html { redirect_to redirect_to_path}
-            format.json { render :show, status: :created, location: record }
-          else 
-            format.html { redirect_to redirect_to_path, notice: "El registro se ha cambiado a #{status_description.downcase}"}
-            format.json { render :show, status: :created, location: record }
-          end
-        else
-          if params_id != params[:id] 
-            flash[:alert] = "No se pudo cambiar el estado del registro"
-            format.html { render redirect_to_path}
-            format.json { render json: record.errors, status: :unprocessable_entity }
-          else
-            format.html { render redirect_to_path, notice: "No se pudo cambiar el estado del registro" }
-            format.json { render json: record.errors, status: :unprocessable_entity }
-          end
-        end
+      if record.save
+        format.html { redirect_to redirect_to_path, notice: "El registro se ha cambiado a #{status_description == "A" ? "ACTIVO" : "INACTIVO"}".html_safe }
+        format.json { render :show, status: :created, location: record }
       else
-        if params_id != params[:id] 
-          flash[:alert] = "El registro que intenta cambiar no cumple con los criterios definidos, ¡verifique!"
-          format.html { redirect_to redirect_to_path}
-        else
-          format.html { redirect_to redirect_to_path, notice: "El registro que intenta cambiar no cumple con los criterios definidos, ¡verifique!" }
-        end
+        format.html { render redirect_to_path, alert: "No se pudo cambiar el estado del registro" }
+        format.json { render json: record.errors, status: :unprocessable_entity }
       end
     end
   end
