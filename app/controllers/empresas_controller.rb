@@ -62,7 +62,7 @@ class EmpresasController < ApplicationController
   end
 
   def inactivar_empresa
-    change_status_to('I', Empresa, empresas_url, params[:id])
+    change_status_to('F', Empresa, empresas_url, params[:id])
   end
 
   def activar_empresa

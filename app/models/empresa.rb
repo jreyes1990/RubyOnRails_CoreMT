@@ -14,7 +14,7 @@
 #
 class Empresa < ApplicationRecord
     has_many :areas
-    validates_presence_of :nombre, :descripcion, :codigo_empresa, message: ": este campo es obligatorio"    
+    validates_presence_of :nombre, :descripcion, :codigo_empresa, message: ": este campo es obligatorio" 
     validates :nombre, uniqueness: {case_sensitive: false, scope: :estado, message: "El nombre que intenta registrar ya existe" }
     
     def informacion_empresa

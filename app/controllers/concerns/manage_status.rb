@@ -11,7 +11,7 @@ module ManageStatus
 
     respond_to do |format|
       if record.save
-        format.html { redirect_to redirect_to_path, notice: "El registro se ha cambiado a #{status_description == "A" ? "ACTIVO" : "INACTIVO"}".html_safe }
+        format.html { redirect_to redirect_to_path, notice: "El registro se ha cambiado a #{desc_estado(record.estado)}".html_safe }
         format.json { render :show, status: :created, location: record }
       else
         format.html { render redirect_to_path, alert: "No se pudo cambiar el estado del registro" }

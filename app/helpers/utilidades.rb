@@ -168,6 +168,22 @@ module Utilidades
     return "<div class='text-center'><span class='#{badge_estado}'>#{nombre_estado}</span></div>".html_safe
   end
 
+  def desc_estado(status)
+    descripcion_estado = nil
+
+    if status == "A"
+      descripcion_estado = "ACTIVO"
+    elsif status == "I"
+      descripcion_estado = "INACTIVO"
+    elsif status == "C"
+      descripcion_estado = "CANCELADO"  
+    elsif status == "P"
+      descripcion_estado = "EN PROCESO"
+    elsif status == "F"
+      descripcion_estado = "FINALIZADO"  
+    end
+  end
+
   def valida_pregunta(valor)
     if valor == 'N'
       respuesta = 'No'
