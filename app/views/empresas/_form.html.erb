@@ -1,10 +1,9 @@
 <!-- Inicio Empresa -->
-<div class="card shadow">
-  <%= simple_form_for(@empresa) do |f| %>
+<%= simple_form_for(@empresa) do |f| %>
     <%= f.hidden_field :flag_empresa, :value=>  flag_empresa %>
     <%= f.error_notification %>
     <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
-
+  <div class="card shadow">
     <% if (flag_empresa == 0 || flag_empresa == 1)
         @retorno = empresas_path
       elsif flag_empresa == 2 
@@ -55,5 +54,5 @@
         <% end %>
       </div>
     </div>
-  <% end %>
-</div>
+  </div>
+<% end %>

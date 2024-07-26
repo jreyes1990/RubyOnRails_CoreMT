@@ -26,7 +26,7 @@ class EmpresasController < ApplicationController
     @empresa = Empresa.new(empresa_params)
     @empresa.estado = "A"
     @empresa.user_created_id = current_user.id
-    
+
     respond_to do |format|
       if @empresa.save
         format.html { redirect_to empresas_path, notice: "Empresa Creada" }
@@ -62,7 +62,7 @@ class EmpresasController < ApplicationController
   end
 
   def inactivar_empresa
-    change_status_to('F', Empresa, empresas_url, params[:id])
+    change_status_to('I', Empresa, empresas_url, params[:id])
   end
 
   def activar_empresa

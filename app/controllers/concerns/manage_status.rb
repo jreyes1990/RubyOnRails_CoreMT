@@ -1,7 +1,7 @@
 # app/controllers/concerns/manage_status.rb
 module ManageStatus
   extend ActiveSupport::Concern
-  include Utilidades  
+  include Utilidades
 
   def change_status_to(status_description, model, redirect_to_path, params_id)
     record = model.find(params_id)
@@ -14,7 +14,10 @@ module ManageStatus
         format.html { redirect_to redirect_to_path, notice: "El registro se ha cambiado a #{desc_estado(record.estado)}".html_safe }
         format.json { render :show, status: :created, location: record }
       else
-        format.html { render redirect_to_path, alert: "No se pudo cambiar el estado del registro" }
+        format.html do
+          flash[:error] = record.errors.full_messages.to_sentence
+          redirect_to redirect_to_path
+        end
         format.json { render json: record.errors, status: :unprocessable_entity }
       end
     end
@@ -44,4 +47,3 @@ module ManageStatus
     end
   end
 end
-  

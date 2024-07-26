@@ -54,7 +54,8 @@ document.addEventListener("turbolinks:load", function () {
             //     showCancelButton: true,
             //     confirmButtonColor: '#008000',
             //     cancelButtonColor: '#FF0000',
-            //     confirmButtonText: confirmButtonText
+            //     confirmButtonText: confirmButtonText,
+            //     cancelButtonText: cancelButtonText,
             // }
             // Swal.fire(config).then((result) => {
             //     if (result.isConfirmed) {
