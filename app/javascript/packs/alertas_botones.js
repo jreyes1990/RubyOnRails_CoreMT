@@ -8,13 +8,15 @@ document.addEventListener("turbolinks:load", function () {
       * @param {string} btnClass - El selector del botón al que se adjunta el evento de clic.
       * @param {string} title - El título que se muestra en el cuadro de diálogo de confirmación.
       * @param {string} confirmButtonText - El texto que se muestra en el botón de confirmación del cuadro de diálogo.
+      * @param {string} cancelButtonText - El texto que se muestra en el botón de cancelación del cuadro de diálogo.
       * @param {string} accion - Un parámetro opcional que por defecto es 'inactivar'. Se utiliza para construir el mensaje de texto que se muestra en el cuadro de diálogo de confirmación.
       */
 
-    function confirmStatus(btnClass, title, confirmButtonText, cancelButtonText, accion = 'inactivar') {
+    function confirmStatus(btnClass, title = 'Aplicar Cambios', confirmButtonText = 'Sí, ', cancelButtonText = 'No, Cancelar', accion = 'Inactivar') {
         $(document).on('click', btnClass, function (e) {
             e.preventDefault();
 
+            var status = this.dataset.status;
             var nombre = this.dataset.nombre;
 
             const swalWithBootstrapButtons = Swal.mixin({
@@ -33,10 +35,10 @@ document.addEventListener("turbolinks:load", function () {
             });
             swalWithBootstrapButtons.fire({
               title: title,
-              text: '¿Estás seguro de ' + nombre + ' ?',
+              text: '¿Estás seguro de ' + (status==null ? accion : status) + ' '+ nombre +' ?',
               icon: "warning",
               showCancelButton: true,
-              confirmButtonText: confirmButtonText + nombre,
+              confirmButtonText: confirmButtonText + (status==null ? accion : status),
               cancelButtonText: cancelButtonText,
               reverseButtons: true
             }).then((result) => {
@@ -44,30 +46,13 @@ document.addEventListener("turbolinks:load", function () {
                 window.location.href = this.href;
               }
             });
-
-
-            // var nombre = this.dataset.nombre;
-            // let config = {
-            //     title: title,
-            //     text: '¿Estás seguro de ' + accion + ': ' + nombre + '?',
-            //     icon: 'warning',
-            //     showCancelButton: true,
-            //     confirmButtonColor: '#008000',
-            //     cancelButtonColor: '#FF0000',
-            //     confirmButtonText: confirmButtonText,
-            //     cancelButtonText: cancelButtonText,
-            // }
-            // Swal.fire(config).then((result) => {
-            //     if (result.isConfirmed) {
-            //         window.location.href = this.href;
-            //     }
-            // });
         });
     }
 
-    function confirmSave(btnClass, title, confirmButtonText, cancelButtonText, accion = 'guardar') {
+    function confirmSave(btnClass, title = 'Aplicar Cambios', confirmButtonText = 'Sí, ', cancelButtonText = 'No, Cancelar', accion = 'Guardar') {
       $(document).on('click', btnClass, function (e) {
         e.preventDefault();
+        var evento = this.dataset.evento;
         var nombre = this.dataset.nombre;
 
         const swalWithBootstrapButtons = Swal.mixin({
@@ -86,10 +71,10 @@ document.addEventListener("turbolinks:load", function () {
         });
         swalWithBootstrapButtons.fire({
           title: title,
-          text: '¿Estás seguro de ' + nombre + ' ?',
+          text: '¿Estás seguro de ' + (evento==null ? accion : evento) + ' '+ nombre + ' ?',
           icon: "warning",
           showCancelButton: true,
-          confirmButtonText: confirmButtonText + nombre,
+          confirmButtonText: confirmButtonText + (evento==null ? accion : evento),
           cancelButtonText: cancelButtonText,
           reverseButtons: true
         }).then((result) => {
@@ -116,8 +101,8 @@ document.addEventListener("turbolinks:load", function () {
     confirmStatus('.btn_inactivar_parametro', 'Inactivar Parámetro', '¡Sí, inactivarlo!');
     confirmStatus('.btn_activar_parametro', 'Activar Parámetro', '¡Sí, Activarlo!', 'activar');
     
-    confirmStatus('.btn_status_empresa', 'Aplicar Cambios', 'Sí, ', 'No, Cancelar');
+    confirmStatus('.btn_status_empresa');
 
-    confirmSave('#btn_add_empresa', 'Aplicar Cambios', 'Sí, ', 'No, Cancelar');
+    confirmSave('.btn_event_empresa');
 
 });

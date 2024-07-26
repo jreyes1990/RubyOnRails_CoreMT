@@ -64,7 +64,7 @@
 
                 <% if tiene_permiso("BOTON ELIMINAR REGISTRO", "VER") %>
                   <td class="text-center">
-                    <%= link_to  inactivar_empresa_path(:id => empresa.id), class: "btn btn-outline-danger btn-sm btn_status_empresa", data: { nombre: "Inactivar" } do %>
+                    <%= link_to  inactivar_empresa_path(:id => empresa.id), class: "btn btn-outline-danger btn-sm btn_status_empresa", data: { status: "Inactivar", nombre: "#{empresa.nombre}" } do %>
                       <i class="fas fa-trash-alt"></i>
                     <%end%>
                   </td>

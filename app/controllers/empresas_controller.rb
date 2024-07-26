@@ -29,7 +29,7 @@ class EmpresasController < ApplicationController
 
     respond_to do |format|
       if @empresa.save
-        format.html { redirect_to empresas_path, notice: "Empresa Creada" }
+        format.html { redirect_to empresas_path, notice: "La empresa se ha creado correctamente." }
         format.json { render :show, status: :created, location: @empresa }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -43,7 +43,7 @@ class EmpresasController < ApplicationController
     @empresa.user_updated_id = current_user.id
     respond_to do |format|
       if @empresa.update(empresa_params)
-        format.html { redirect_to empresas_path, notice: "Empresa Actualizada" }
+        format.html { redirect_to empresas_path, notice: "La empresa se ha actualizado correctamente." }
         format.json { render :show, status: :ok, location: @empresa }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -56,7 +56,7 @@ class EmpresasController < ApplicationController
   def destroy
     @empresa.destroy
     respond_to do |format|
-      format.html { redirect_to empresas_url, notice: "Empresa Eliminada" }
+      format.html { redirect_to empresas_url, notice: "La empresa se ha eliminado correctamente." }
       format.json { head :no_content }
     end
   end
