@@ -72,8 +72,12 @@ Rails.application.routes.draw do
     end
 
     #Manejo controller areas
-    resources :areas
-    get 'area/inactivar/:id' => "areas#inactivar_area", as: 'inactivar_area'
+    resources :areas, :path => 'ar' do
+      member do
+        get 'i' => "areas#inactivar_area", as: 'inactivar'
+        get 'a' => "areas#activar_area", as: 'activar'
+      end
+    end
 
     #Manejo controller rol
     resources :roles

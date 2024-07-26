@@ -17,10 +17,14 @@ class Empresa < ApplicationRecord
     
     validates_presence_of :nombre, :descripcion, :codigo_empresa, message: ": este campo es obligatorio"
     validates :estado, inclusion: { in: %w(A I), message: "%{value} no es una opción válida, Verifique!!" }
-    validates :nombre, uniqueness: {case_sensitive: false, scope: :estado, message: "El nombre que intenta registrar ya existe" }
+    validates :nombre, uniqueness: {case_sensitive: false, scope: :estado, message: "El dato que intenta registrar ya existe, Verifique!!!" }
 
     def informacion_empresa
       "CÓDIGO: " + "#{self.id}" + " #{self.nombre.upcase}"
+    end
+
+    def codigo_nombre_empresa
+      "#{self.codigo_empresa}: #{self.nombre}"
     end
 
     def empresa_con_codigo

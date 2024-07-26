@@ -15,16 +15,16 @@
     </div>
     <div class="card-body">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="form-inputs">
               <div class="row">
-                <div class="col-md-2">
-                  <%= f.input :codigo_empresa %>
+                <div class="col-2">
+                  <%= f.input :codigo_empresa, label: "Cod. Empresa" %>
                 </div>
-                <div class="col-md-8">
+                <div class="col">
                   <%= f.input :nombre %>
                 </div>
-                <div class="col-md-2">
+                <div class="col-auto">
                   <%= f.input :codigo_hex, input_html: { type: "color" } %>
                 </div>
               </div>

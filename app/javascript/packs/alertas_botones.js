@@ -88,7 +88,6 @@ document.addEventListener("turbolinks:load", function () {
 
     confirmStatus('.btn-inactivar-usuario', 'Inactivar Usuario', '¡Sí, inactivarlo!');
     
-    confirmStatus('.btn_inactivar_area', 'Inactivar Área', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_rol', 'Inactivar Rol', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_menu', 'Inactivar Menu', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_opcion', 'Inactivar Opción', '¡Sí, inactivarlo!');
@@ -102,7 +101,9 @@ document.addEventListener("turbolinks:load", function () {
     confirmStatus('.btn_activar_parametro', 'Activar Parámetro', '¡Sí, Activarlo!', 'activar');
     
     confirmStatus('.btn_status_empresa');
+    confirmStatus('.btn_status_area');
 
     confirmSave('.btn_event_empresa');
+    confirmSave('.btn_event_area');
 
 });

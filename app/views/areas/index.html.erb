@@ -34,7 +34,12 @@
               <th> Nombre </th>
               <th> Descripción </th>
               <th class="text-center"> Estado </th>
-              <th class="text-center"> Opciones</th>
+              <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
+              <th class="text-center"></th>
+              <% end %>
+              <% if tiene_permiso("BOTON ACTIVAR/INACTIVAR REGISTRO", "VER") %>
+              <th class="text-center"></th>
+              <% end %>
             </tr>
           </thead>
           <tbody>
@@ -45,20 +50,20 @@
                 <td> <%= area.nombre %> </td>
                 <td> <%= area.descripcion %> </td>
                 <td class="text-center"> <%= area.estado %> </td>
-                <td class="text-center">
-                  <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
+                <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
+                  <td class="text-center">
                     <%= link_to edit_area_path(area), class: "btn btn-outline-info btn-sm " do %>
                       <i class="fas fa-edit"></i>
-                    <%end%>
-                  <% end %>
-
-                  <% if tiene_permiso("BOTON ELIMINAR REGISTRO", "VER") %>
-                    <%= link_to  inactivar_area_path(:id => area.id), class: "btn btn-outline-danger btn-sm btn_inactivar_area", data: { nombre: "#{area.nombre}" } do %>
+                    <% end %>
+                  </td>
+                <% end %>
+                <% if tiene_permiso("BOTON ACTIVAR/INACTIVAR REGISTRO", "VER") %>
+                  <td class="text-center">
+                    <%= link_to  inactivar_area_path(:id => area.id), class: "btn btn-outline-danger btn-sm btn_status_area", data: { status: "Inactivar", nombre: "#{area.nombre}" } do %>
                       <i class="fas fa-trash-alt"></i>
-                    <%end%>
-                  <% end %>
-
-                </td>
+                    <% end %>
+                  </td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>

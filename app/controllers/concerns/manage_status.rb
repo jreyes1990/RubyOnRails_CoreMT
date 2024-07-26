@@ -10,17 +10,20 @@ module ManageStatus
     record.estado = status_description
 
     respond_to do |format|
-      if record.save
-        format.html { redirect_to redirect_to_path, notice: "El registro ha cambiado a estado #{desc_estado(record.estado)}".html_safe }
-        format.json { render :show, status: :created, location: record }
-      else
+      begin
+        ActiveRecord::Base.transaction do
+          guardar_con_manejo_de_excepciones(record, "No se pudo actualizar el estado", "Error de base de datos al actualizar el estado del registro")
+          format.html { redirect_to redirect_to_path, notice: "El registro ha cambiado a estado #{desc_estado(record.estado)}".html_safe }
+          format.json { render :show, status: :created, location: record }
+        end
+      rescue StandardError => e
         format.html do
-          flash[:error] = record.errors.full_messages.to_sentence
+          flash[:error] = e.message
           redirect_to redirect_to_path
         end
-        format.json { render json: record.errors, status: :unprocessable_entity }
+        format.json { render json: { error: e.message }, status: :unprocessable_entity }
       end
-    end
+    end  
   end
 
   def guardar_con_manejo_de_excepciones(registro, mensaje_error, mensaje_error_bd)
@@ -28,10 +31,8 @@ module ManageStatus
       registro.save!
     rescue ActiveRecord::RecordInvalid => e
       raise StandardError.new("#{mensaje_error}: #{e.message}")
-      Rails.logger.error("ERROR EN CONSOLA: #{e.message}")
     rescue ActiveRecord::StatementInvalid => e
       raise StandardError.new("#{mensaje_error_bd}: #{e.message}")
-      Rails.logger.error("ERROR EN CONSOLA: #{e.message}")
     end
   end
 

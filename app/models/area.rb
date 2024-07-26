@@ -14,9 +14,11 @@
 #  updated_at      :datetime         not null
 #
 class Area < ApplicationRecord
-  validates :nombre, :descripcion, :empresa_id, presence: true
   belongs_to :empresa
 
+  validates :nombre, :descripcion, :empresa_id, :user_created_id, presence: true
+  validates :estado, inclusion: { in: %w(A I), message: "%{value} no es una opción válida, Verifique!!" }
+  validates :nombre, uniqueness: {case_sensitive: false, scope: [:empresa_id, :estado], message: "El dato que intenta registrar ya existe, Verifique!!!" }
 
 
   def nombre_area_empresa
