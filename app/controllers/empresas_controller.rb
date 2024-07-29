@@ -5,7 +5,7 @@ class EmpresasController < ApplicationController
 
   # GET /empresas or /empresas.json
   def index
-    @empresas = Empresa.where(estado: 'A').order(:id)
+    @empresas = Empresa.where(estado: ['A', 'I']).order(:id)
   end
 
   # GET /empresas/1 or /empresas/1.json
@@ -27,13 +27,12 @@ class EmpresasController < ApplicationController
     @empresa.estado = "A"
     @empresa.user_created_id = current_user.id
 
-    respond_to do |format|
-      if @empresa.save
-        format.html { redirect_to empresas_path, notice: "La empresa se ha creado correctamente." }
-        format.json { render :show, status: :created, location: @empresa }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @empresa.errors, status: :unprocessable_entity }
+    ActiveRecord::Base.transaction do
+      guardar_con_manejo_de_excepciones(@empresa, "No se pudo crear la empresa", "Error de base de datos al crear la empresa")
+
+      respond_to do |format|
+        format.html { redirect_to empresas_path, notice: "La empresa [ <strong>#{@empresa.nombre.upcase}</strong> ] se ha creado correctamente.".html_safe }
+        format.json { render :show, status: :created, location: empresas_path }
       end
     end
   end
@@ -41,13 +40,12 @@ class EmpresasController < ApplicationController
   # PATCH/PUT /empresas/1 or /empresas/1.json
   def update
     @empresa.user_updated_id = current_user.id
-    respond_to do |format|
-      if @empresa.update(empresa_params)
-        format.html { redirect_to empresas_path, notice: "La empresa se ha actualizado correctamente." }
-        format.json { render :show, status: :ok, location: @empresa }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @empresa.errors, status: :unprocessable_entity }
+
+    ActiveRecord::Base.transaction do
+      actualizar_con_manejo_de_excepciones(@empresa, empresa_params, "No se pudo actualizar el área", "Error de base de datos al actualizar el área")
+      respond_to do |format|
+        format.html { redirect_to empresas_url, notice: "La empresa [ <strong>#{@empresa.nombre.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+        format.json { render :show, status: :ok, location: empresas_url }
       end
     end
   end
@@ -61,12 +59,12 @@ class EmpresasController < ApplicationController
     end
   end
 
-  def inactivar_empresa
-    change_status_to('I', Empresa, empresas_url, params[:id])
+  def inactivar
+    change_status_to('I', Empresa, params[:id], empresas_url)
   end
 
-  def activar_empresa
-    change_status_to('A', Empresa, empresas_url, params[:id])
+  def activar
+    change_status_to('A', Empresa, params[:id], empresas_url)
   end
 
   private

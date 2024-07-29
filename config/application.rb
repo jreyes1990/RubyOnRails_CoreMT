@@ -18,17 +18,20 @@ module EjemploTemplate
     config.session_store :active_record_store,
       :key => '_redmine_session'
 
-    # Para evitar que se generen los archivos de especificación (specs)
-    # al utilizar el comando rails generate scaffold_controller
+    # Configuración para evitar la generación de archivos no deseados al generar scaffolds y controllers
     config.generators do |g|
-      g.test_framework :rspec
-      g.helper false
-      g.assets false
-      g.view_specs false
-      g.helper_specs false
-      g.controller_specs false
+      g.test_framework :rspec   # Especifica que el marco de pruebas utilizado es RSpec (en lugar de Minitest)
+      g.helper false            # Evita la generación de archivos helper.
+      g.assets false            # Evita la generación de archivos de assets (como CSS y JavaScript).
+      g.view_specs false        # Evita la generación de archivos de prueba para vistas.
+      g.helper_specs false      # Evita la generación de archivos de prueba para helpers.
+      g.controller_specs false  # Evita la generación de archivos de prueba para controladores.
+      g.routing_specs false     # Evita la generación de archivos de prueba para rutas.
+      g.stylesheets false       # Evita la generación de archivos de estilos (CSS/SCSS).
+      g.javascripts false       # Evita la generación de archivos de JavaScript.
+      g.system_tests false      # Evita la generación de archivos de pruebas de sistema.
     end
-      
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

@@ -30,6 +30,4 @@ class Persona < ApplicationRecord
   def nombre_completo_con_email
     "#{self.nombre} #{self.apellido} - #{self.user.email}"
   end
-
-  
 end

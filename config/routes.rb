@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     post "personas/registrar_cambio_contrasena"
     get "/persona/registrar_token/:persona_id" => "personas#registrar_token_persona", as: "registrar_token_persona"
     get "/persona/generar_token/" => "personas#generar_token", as: "generar_token"
+    get "search_area_empresa_usuario" => "usuarios#search_area_empresa_usuario", as: "search_area_empresa_usuario"
 
     resources :datos_apis
     resources :detalle_datos_externos
@@ -52,11 +53,18 @@ Rails.application.routes.draw do
     get 'usuarios/agregar_usuario'
 
     #Manejo controller Personas
-    resources :personas
+    resources :personas, :path => 'pers' do
+      member do
+        get 'i' => "personas#inactivar", as: 'inactivar'
+        get 'a' => "personas#activar", as: 'activar'
+      end
+    end
     get 'personas/show/:id' => "personas#show", as: 'ver_perfil'
     #get 'personas/edit/:id' => "personas#edit", as: 'edit_persona'
     patch 'personas/update'
-    get 'inactivar/:id' => "personas#inactivar", as: 'inactivaruser'
+    # get 'inactivar/:id' => "personas#inactivar", as: 'inactivar_user'
+    # get 'activar/:id' => "personas#activar", as: 'activar_user'
+    get 'conservar_password/:id' => "personas#conservar_password", as: 'conservar_password_usuario'
     #resources :personas , only: [:show, :edit, :update]
 
 
@@ -66,16 +74,16 @@ Rails.application.routes.draw do
     #Manejo controller empresas
     resources :empresas, :path => 'emp' do
       member do
-        get 'i' => "empresas#inactivar_empresa", as: 'inactivar'
-        get 'a' => "empresas#activar_empresa", as: 'activar'
+        get 'i' => "empresas#inactivar", as: 'inactivar'
+        get 'a' => "empresas#activar", as: 'activar'
       end
     end
 
     #Manejo controller areas
     resources :areas, :path => 'ar' do
       member do
-        get 'i' => "areas#inactivar_area", as: 'inactivar'
-        get 'a' => "areas#activar_area", as: 'activar'
+        get 'i' => "areas#inactivar", as: 'inactivar'
+        get 'a' => "areas#activar", as: 'activar'
       end
     end
 

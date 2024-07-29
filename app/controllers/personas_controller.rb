@@ -1,4 +1,5 @@
 class PersonasController < ApplicationController
+  include ManageStatus
   before_action :set_persona, only: [:show, :edit, :update, :destroy]
   #before_action :comprobar_permiso
 
@@ -39,7 +40,7 @@ class PersonasController < ApplicationController
   #Proceso para actualizar una persona
   def update
     image_data = params[:persona][:foto]
-    
+
 
     if image_data.present?
       resized_image = resize_image(image_data, 300, 180)  # Tamaño deseado: 800x600
@@ -70,93 +71,142 @@ class PersonasController < ApplicationController
 
   #Proceso para inactivar una persona
   def inactivar
-      @personas = Persona.find(params[:id])
-      @personas.user_updated_id = current_user.id
-      @personas.estado = "I"
+    begin
+      ActiveRecord::Base.transaction do
+        change_status_to("I", Persona, params[:id])
+
+        @persona = Persona.find(params[:id])
+        @nombre_completo = @persona.nombre + " " + @persona.apellido
+        @usuario = User.find(@persona.user_id)
+        change_status_to("I", User, @usuario.id)
+      end
 
       respond_to do |format|
-        if @personas.save
-            @usuario = User.find(@personas.user_id)
-
-            @usuario.estado = "I"
-            @usuario.user_updated_id = current_user.id
-            if @usuario.save
-              format.html { redirect_to usuarios_index_path, notice: "Persona y Usuario Inctivado" }
-              format.json { render :show, status: :created, location: @personas }
-            else
-              format.html { render :new, status: :unprocessable_entity }
-              format.json { render json: @personas.errors, status: :unprocessable_entity }
-            end
-
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @personas.errors, status: :unprocessable_entity }
-        end
+        format.html { redirect_to usuarios_index_path, notice: "El usuario [ <strong>#{@nombre_completo.upcase}</strong> ] se ha inactivado correctamente.".html_safe }
+        format.json { render :show, status: :ok, location: @persona }
       end
+    rescue ActiveRecord::RecordNotFound => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue StandardError => e
+      handle_standard_error(e, usuarios_index_path)
     end
+  end
 
-    def modal_cambiar_contrasena
-      @persona_id = params[:persona_id]
+  def activar
+    begin
+      ActiveRecord::Base.transaction do
+        change_status_to("A", Persona, params[:id])
+
+        @persona = Persona.find(params[:id])
+        @nombre_completo = @persona.nombre + " " + @persona.apellido
+        @usuario = User.find(@persona.user_id)
+        change_status_to("A", User, @usuario.id)
+      end
 
       respond_to do |format|
-        format.html
-        format.js
+        format.html { redirect_to usuarios_index_path, notice: "El usuario [ <strong>#{@nombre_completo.upcase}</strong> ] se ha activado correctamente.".html_safe }
+        format.json { render :show, status: :ok, location: @persona }
       end
+    rescue ActiveRecord::RecordNotFound => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue StandardError => e
+      handle_standard_error(e, usuarios_index_path)
     end
+  end
 
-    def registrar_cambio_contrasena
-      contrasena_nueva = params[:cambio_contrasena_form][:password_nueva]
-      confirma_contrasena = params[:cambio_contrasena_form][:password_confirmada]
-      @user = User.find(current_user.id)
+  def conservar_password
+    begin
+      @persona = Persona.find(params[:id])
+      @persona.user_updated_id = current_user.id
 
-      respond_to do |format|
-          if contrasena_nueva == confirma_contrasena
-            contrasena_nueva_encriptada = BCrypt::Password.create(contrasena_nueva)
-              @user.encrypted_password = contrasena_nueva_encriptada
+      ActiveRecord::Base.transaction do
+        guardar_con_manejo_de_excepciones(@persona, "No se pudo actualizar los datos del usuario", "Error de base de datos al actualizar los datos del usuario")
 
-              if @user.save
-                format.html { redirect_to persona_path(current_user.persona), notice: "Contraseña actualizada correctamente." }
-                format.json { render :show, status: :created, location: @user }
-              else
-                format.html { redirect_to persona_path(current_user.persona), alert: "Error al actualizar la contraseña." }
-                format.json { render :show, status: :created, location: @user }
-              end
-          else
-            format.html { redirect_to persona_path(current_user.persona), alert: "Las nueva contraseña y la confirmación no coinciden, intente de nuevo." }
-            format.json { render :show, status: :created, location: @user }
-          end
-      end
-    end
-
-    def generate_token
-      loop do
-          token = SecureRandom.hex
-          return token unless Persona.exists?({token: token})
-      end
-    end
-
-    def registrar_token_persona
-
-      validacion = params[:validacion]
-      persona = Persona.find(params[:persona_id])
-          if validacion == "ACTIVAR"
-            token = generate_token
-            persona.token = token
-          else validacion == "DESACTIVAR"
-            persona.token = ""
-          end
+        @usuario = User.find(@persona.user_id)
+        @usuario.password_changed = 't' || true
+        @usuario.user_updated_id = current_user.id
+        guardar_con_manejo_de_excepciones(@usuario, "No se pudo conservar la contraseña del usuario", "Error de base de datos al conservar la contraseña del usuario")
 
         respond_to do |format|
-          if persona.save
-            genera_bitacora_movil("GESTION_TOKEN", params[:persona_id], "" , "SE PROCEDE A #{validacion}, TOKEN PARA APLICACIÓN MÓVIL", token)
-            format.html { redirect_to persona_path(current_user.persona), notice: "Token para Aplicación Móvil Actualizado correctamente." }
-            format.json { render :show, status: :created, location: persona }
-          else
-            format.html { redirect_to persona_path(current_user.persona), notice: "Error al generar token para aplicación Móvil." }
-            format.json { render :show, status: :created, location: persona }
+          format.html { redirect_to usuarios_index_path, notice: "Se ha restablecido a las credenciales actuales" }
+          format.json { render :show, status: :ok, location: @personas }
         end
       end
+    rescue ActiveRecord::RecordNotFound => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue StandardError => e
+      handle_standard_error(e, usuarios_index_path)
     end
+  end
+
+  def modal_cambiar_contrasena
+    @persona_id = params[:persona_id]
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
+
+  def registrar_cambio_contrasena
+    contrasena_nueva = params[:cambio_contrasena_form][:password_nueva]
+    confirma_contrasena = params[:cambio_contrasena_form][:password_confirmada]
+    @user = User.find(current_user.id)
+
+    respond_to do |format|
+      if contrasena_nueva == confirma_contrasena
+        contrasena_nueva_encriptada = BCrypt::Password.create(contrasena_nueva)
+        @user.encrypted_password = contrasena_nueva_encriptada
+
+        if @user.save
+          format.html { redirect_to persona_path(current_user.persona), notice: "Contraseña actualizada correctamente." }
+          format.json { render :show, status: :created, location: @user }
+        else
+          format.html { redirect_to persona_path(current_user.persona), alert: "Error al actualizar la contraseña." }
+          format.json { render :show, status: :created, location: @user }
+        end
+      else
+        format.html { redirect_to persona_path(current_user.persona), alert: "Las nueva contraseña y la confirmación no coinciden, intente de nuevo." }
+        format.json { render :show, status: :created, location: @user }
+      end
+    end
+  end
+
+  def generate_token
+    loop do
+        token = SecureRandom.hex
+        return token unless Persona.exists?({token: token})
+    end
+  end
+
+  def registrar_token_persona
+
+    validacion = params[:validacion]
+    persona = Persona.find(params[:persona_id])
+        if validacion == "ACTIVAR"
+          token = generate_token
+          persona.token = token
+        else validacion == "DESACTIVAR"
+          persona.token = ""
+        end
+
+      respond_to do |format|
+        if persona.save
+          genera_bitacora_movil("GESTION_TOKEN", params[:persona_id], "" , "SE PROCEDE A #{validacion}, TOKEN PARA APLICACIÓN MÓVIL", token)
+          format.html { redirect_to persona_path(current_user.persona), notice: "Token para Aplicación Móvil Actualizado correctamente." }
+          format.json { render :show, status: :created, location: persona }
+        else
+          format.html { redirect_to persona_path(current_user.persona), notice: "Error al generar token para aplicación Móvil." }
+          format.json { render :show, status: :created, location: persona }
+      end
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

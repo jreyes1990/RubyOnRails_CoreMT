@@ -26,7 +26,11 @@ class Area < ApplicationRecord
   end
 
   def nombre_con_codigo
-    "#{self.id} | ÁREA: #{self.nombre.upcase}" 
+    "#{self.id} | ÁREA: #{self.nombre.upcase}"
   end
- 
+
+  def area_con_codigo
+    "#{self.codigo_area} | #{self.nombre.upcase}"
+  end
+
 end

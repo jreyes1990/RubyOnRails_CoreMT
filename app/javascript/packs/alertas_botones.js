@@ -53,6 +53,7 @@ document.addEventListener("turbolinks:load", function () {
       $(document).on('click', btnClass, function (e) {
         e.preventDefault();
         var evento = this.dataset.evento;
+        var retornaFormulario = this.dataset.retornaFormulario;
         var nombre = this.dataset.nombre;
 
         const swalWithBootstrapButtons = Swal.mixin({
@@ -79,14 +80,20 @@ document.addEventListener("turbolinks:load", function () {
           reverseButtons: true
         }).then((result) => {
           if (result.isConfirmed) {
-            // Encuentra el formulario más cercano y lo envía
-            $(this).closest('form').submit();
+            if (retornaFormulario === 'SI'){
+              alert("RETORNA FORMULARIO: "+retornaFormulario);
+              // Encuentra el formulario más cercano y lo envía
+              $(this).closest('form').submit();
+            } else if(retornaFormulario === 'NO'){
+              alert("RETORNA FORMULARIO: "+retornaFormulario);
+              window.location.href = this.href;
+            } else {
+              alert("No esta permitido")
+            }
           }
         });
       });
     }
-
-    confirmStatus('.btn-inactivar-usuario', 'Inactivar Usuario', '¡Sí, inactivarlo!');
     
     confirmStatus('.btn_inactivar_rol', 'Inactivar Rol', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_menu', 'Inactivar Menu', '¡Sí, inactivarlo!');
@@ -102,8 +109,11 @@ document.addEventListener("turbolinks:load", function () {
     
     confirmStatus('.btn_status_empresa');
     confirmStatus('.btn_status_area');
+    confirmStatus('.btn_status_usuario');
 
     confirmSave('.btn_event_empresa');
     confirmSave('.btn_event_area');
+    confirmSave('.btn_event_usuario');
 
+    confirmSave('.btn_password_usuario');
 });

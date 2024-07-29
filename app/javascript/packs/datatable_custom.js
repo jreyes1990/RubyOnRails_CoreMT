@@ -97,7 +97,7 @@ document.addEventListener("turbolinks:load", () => {
         language: options.language,
         responsive: options.responsive,
         lengthChange: options.lengthChange,
-        lengthMenu: options.lengthMenu,
+        // lengthMenu: options.lengthMenu,
         select: options.select,
         buttons: options.buttons,
         drawCallback: function (settings) {
@@ -204,7 +204,7 @@ document.addEventListener("turbolinks:load", () => {
       language: options.language,
       responsive: options.responsive,
       lengthChange: options.lengthChange,
-      lengthMenu: options.lengthMenu,
+      // lengthMenu: options.lengthMenu,
       select: options.select,
       buttons: options.buttons,
       drawCallback: function (settings) {
@@ -223,11 +223,11 @@ document.addEventListener("turbolinks:load", () => {
     language: espanol,
     responsive: true,
     lengthChange: true,
-    lengthMenu: [
-      // Define las opciones de cantidad de registros por página en el menú desplegable.
-      [5, 10, 15, 20, 25, 50, -1],      // Opciones de cantidad de registros.
-      [5, 10, 15, 20, 25, 50, 'Todos'], // Etiquetas que se muestran en el menú desplegable.
-    ],
+    // lengthMenu: [
+    //   // Define las opciones de cantidad de registros por página en el menú desplegable.
+    //   [5, 10, 15, 20, 25, 50, -1],      // Opciones de cantidad de registros.
+    //   [5, 10, 15, 20, 25, 50, 'Todos'], // Etiquetas que se muestran en el menú desplegable.
+    // ],
     select: true,
     buttons: btnDescarga,
     initComplete: true,
@@ -269,12 +269,10 @@ document.addEventListener("turbolinks:load", () => {
     '#datatable_empresas',
     [],
     [
-      { responsivePriority: 1, targets: 0 },
-      { responsivePriority: 2, targets: 1 },
-      { responsivePriority: 3, targets: 2 },
+      { responsivePriority: 1, targets: [0, -1, -2] },
+      { responsivePriority: 2, targets: [2, -3] },
+      { responsivePriority: 3, targets: 1 },
       { responsivePriority: 4, targets: 3 },
-      { responsivePriority: 5, targets: 4 },
-      { responsivePriority: 1, targets: 5 },
     ],
     opciones
   );
@@ -282,14 +280,14 @@ document.addEventListener("turbolinks:load", () => {
   //datatable para la vista de areas empresas
   agrupar_filas(
     '#datatable_areas_empresas',
-    [],
+    [ 
+      { columnIndex: 1, label: 'Empresa ' },
+    ],
     [
-      { responsivePriority: 1, targets: 0 },
-      { responsivePriority: 2, targets: 1 },
+      { responsivePriority: 1, targets: [0, -1, -2] },
+      { responsivePriority: 2, targets: [3, -3] },
       { responsivePriority: 3, targets: 2 },
-      { responsivePriority: 4, targets: 3 },
-      { responsivePriority: 5, targets: 4 },
-      { responsivePriority: 1, targets: 5 },
+      { responsivePriority: 4, targets: 4 },
     ],
     opciones
   );

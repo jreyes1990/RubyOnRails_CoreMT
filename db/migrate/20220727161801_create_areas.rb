@@ -3,7 +3,7 @@ class CreateAreas < ActiveRecord::Migration[6.0]
     create_table :areas, id: false, comment: "Catálogo de Áreas por Empresa" do |t|
       t.serial :id, null: false, comment: "Identificador de la llave primaria"
       t.references :empresa, null: false, foreign_key: false, index: false, comment: "Identificador de la empresa"
-      t.string :codigo_area, comment: "Identificador del código del área"
+      t.integer :codigo_area, comment: "Identificador del código del área"
       t.string :nombre, limit: 100, null: false, comment: "Nombre del área"
       t.string :descripcion, comment: "Descripción general del área"
       t.string :codigo_hex, null: true, default: "#232323", comment: "Identificador del color codigo hexadecimal para el área"

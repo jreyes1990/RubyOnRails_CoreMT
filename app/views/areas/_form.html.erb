@@ -17,7 +17,7 @@
             <%= f.association :empresa, collection: Empresa.where(estado: 'A').order(id: :DESC), value_method: :id, label_method: :codigo_nombre_empresa,  label: "Empresa", include_blank: "Seleccione una empresa", input_html: { class: "select2", id: 'empresa_id_area', required: true} %>
             
             <div class="row">
-              <div class="col-md">
+              <div class="col-md-2">
                 <%= f.input :codigo_area %>
               </div>
               <div class="col-md">
@@ -36,7 +36,7 @@
 
     <div class="card-footer shadow bg-transparent" style="background-color: #efefef !important;">
       <div class="col-md-12 text-center">
-        <%= link_to areas_path, class: "btn btn-danger btn-sm" do %>
+        <%= link_to areas_path, class: "btn btn-danger btn-sm mt-2" do %>
           <span class="icon text-red-50">
             <i class="fas fa-arrow-circle-left"></i>
           </span>
@@ -44,7 +44,7 @@
         <% end %>
 
         <% if tiene_permiso("BOTON REGISTRAR", "VER") %>
-          <%= button_tag f.submit, class: "btn btn-success btn-sm btn_event_area", data: { evento: "#{titulo_area}", nombre: "#{@area.nombre}" } do %>
+          <%= button_tag f.submit, class: "btn btn-success btn-sm mt-2 btn_event_area", data: { evento: "#{titulo_area}", nombre: "#{@area.nombre}" } do %>
             <span class="text"><%= titulo_area.upcase %></span>
             <span class="icon text-green-50">
               <i class="fas fa-edit"></i>
