@@ -20,12 +20,11 @@
                 <!-- Título -->
                 <td class="header-title"
                                 style="padding: 30px 20px 15px 0; text-transform: capitalize; vertical-align: middle; text-align: left; width: 60%;">
-                  <span style="font-size: 18px; font-weight: lighter; color: grey;"><b>sistema de punto de
-                      venta - POS</b></span>
+                  <span style="font-size: 18px; font-weight: lighter; color: grey;"><b><%= @titulo_correo %></b></span>
                 </td>
                 <!-- Logo -->
                 <td style="text-align: right; padding-right: 10px; width: 40%;">
-                  <img src="https://soporte.sistemasmt.com.gt/media/logos/LogoCooperativa.png"
+                  <img src="<%= @logo_correo %>"
                                     alt="Email Madre Tierra" width="80" height="80">
                 </td>
               </tr>
@@ -40,7 +39,7 @@
             <!-- Tu contenido del mensaje aquí... omitido por brevedad -->
             <p
                         style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px; color: grey; ">
-              Bienvenido, <%= @usuario %>, a sistema de punto de venta - POS.</p>
+              <%= @titulo_bienvenida %></p>
             <p
                         style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px; color: grey;">
               Has sido registrado con éxito en nuestra aplicación. Puedes iniciar sesión con los siguientes
@@ -49,7 +48,7 @@
             <p
                         style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px; color: grey;">
               <strong>Correo Electonico: </strong>
-              <%= @email %>
+              <%= @correo_electronico %>
             </p>
             <p
                         style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px; color: grey;">

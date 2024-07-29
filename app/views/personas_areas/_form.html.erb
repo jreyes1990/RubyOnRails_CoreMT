@@ -14,19 +14,6 @@
             <div class="col-md-3">
             </div>
             <div class="col-md-6">
-
-              <% if personas_area.errors.any? %>
-              <div id="error_explanation">
-                <h5><%= pluralize(personas_area.errors.count, "error") %> Item no se puede guardar:</h5>
-
-                <ul>
-                  <% personas_area.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-              <% end %>
-
               <div class="field">
                 <%= form.label :usuario %>
                 <%= form.collection_select(:persona_id, Persona.where(:estado => 'A'), :id, :nombre_completo ,  {:prompt => "Seleccione un Usuario"}, {:class => "form-control select2", :required => ''}) %>
@@ -51,21 +38,23 @@
           <br />
           <div class="row">
             <div class="col-md-12 text-right">
-            <% if tiene_permiso("BOTON REGISTRAR", "VER") %>
-              <%= button_tag form.submit, class: "btn btn-success btn-sm" do %>
-              <span class="icon text-white-50">
-                <i class="fas fa-edit"></i>
-              </span>
-              <span class="text">REGISTRAR</span>
-              <%end%>
-            <% end %>
-              <%= link_to personas_areas_path, class: "btn btn-outline-danger btn-sm" do %>
+            <%= link_to personas_areas_path, class: "btn btn-outline-danger btn-sm mt-2" do %>
               <span class="icon text-red-50">
                 <i class="fas fa-arrow-circle-left"></i>
               </span>
               <span class="text">CANCELAR</span>
-              <%end%>
+            <% end %>
 
+            <% if tiene_permiso("BOTON REGISTRAR", "VER") %>
+              <%= button_tag form.submit, 
+                  class: "btn btn-success btn-sm mt-2 btn_event_persona_area",
+                  data: { evento: "#{titulo_persona_area}", nombre: "Persona por Área" } do %>
+              <span class="icon text-white-50">
+                <i class="fas fa-edit"></i>
+              </span>
+              <span class="text"><%= titulo_persona_area.upcase %></span>
+              <% end %>
+            <% end %>
             </div>
           </div>
           <% end %>

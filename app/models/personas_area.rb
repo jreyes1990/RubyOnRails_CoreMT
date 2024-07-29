@@ -15,7 +15,10 @@
 class PersonasArea < ApplicationRecord
     belongs_to :area
     belongs_to :persona
+
+    validates_presence_of :persona_id, :area_id, :estado, message: ": este campo es obligatorio"
     validates :persona_id, :area_id, presence: true
+    validates :estado, inclusion: { in: %w(A I), message: "%{value} no es una opción válida, Verifique!!" }
     validates_uniqueness_of :persona_id, :scope => :area_id, :message => " error!! solo puede asignar una vez el área"
 
     def nombre_area

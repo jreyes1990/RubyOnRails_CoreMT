@@ -1,10 +1,11 @@
 class RolesController < ApplicationController
+  include ManageStatus
   before_action :set_rol, only: %i[ show edit update destroy ]
   before_action :comprobar_permiso
 
   # GET /roles or /roles.json
   def index
-    @roles = Rol.where(:estado =>'A').order(:id)
+    @roles = Rol.where(estado: ['A', 'I']).order(:id)
   end
 
   # GET /roles/1 or /roles/1.json
@@ -61,20 +62,12 @@ class RolesController < ApplicationController
   end
 
   # Inactivar rol
-  def inactivar_rol
-    @rol = Rol.find(params[:id])
-    @rol.user_updated_id = current_user.id
-    @rol.estado = "I"
-    respond_to do |format|
-      if @rol.save
-        format.html { redirect_to roles_path, notice: "Rol Inctivado" }
-        format.json { render :show, status: :created, location: @rol }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @rol.errors, status: :unprocessable_entity }
-      end
-    end
+  def inactivar
+    change_status_to('I', Rol, params[:id], roles_url)
+  end
 
+  def activar
+    change_status_to('A', Rol, params[:id], roles_url)
   end
 
   private

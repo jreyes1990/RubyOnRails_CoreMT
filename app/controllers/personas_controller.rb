@@ -1,7 +1,7 @@
 class PersonasController < ApplicationController
   include ManageStatus
   before_action :set_persona, only: [:show, :edit, :update, :destroy]
-  #before_action :comprobar_permiso
+  # before_action :comprobar_permiso
 
   def show
       @empresa = Empresa.joins("inner join areas on empresas.id = areas.empresa_id
@@ -142,6 +142,49 @@ class PersonasController < ApplicationController
       handle_standard_error(e, usuarios_index_path)
     rescue StandardError => e
       handle_standard_error(e, usuarios_index_path)
+    end
+  end
+
+  def remitente_email
+    @personas = Persona.find(params[:id])
+    @usuario = User.find(@personas.user_id)
+    @usuario.password = generate_temp_password
+    @usuario.user_updated_id = current_user.id
+    @nombre_completo = @personas.nombre + " " + @personas.apellido
+    @bandera_estado_password = params[:flag_cambio_password].to_i
+
+    if @bandera_estado_password == 1
+      puts "EL USUARIO YA CAMBIO LA CONTRASEÑA #{@bandera_estado_password}"
+      @usuario.password_changed = "f" || false
+    else
+      puts "EL USUARIO ESTA PENDIENTE DE CAMBIAR LA CONTRASEÑA #{@bandera_estado_password}"
+    end
+
+    respond_to do |format|
+      if @usuario.save
+        # Envío de correo electrónico
+        UserMailer.remitente_exitoso(@nombre_completo, @usuario.password, @usuario.email).deliver_now
+        format.html { redirect_to usuarios_index_path, notice: "Las credenciales del usuario #{@nombre_completo} se ha enviado exitosamente" }
+        format.json { render :show, status: :created, location: @usuario }
+      else
+        format.html { redirect_to usuarios_index_path, alert: "Ocurrio un error al Activar la Persona y Usuario, Verifique!!..." }
+        format.json { render json: @usuario.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def modal_edit_email
+    @datos_persona = Persona.find(params[:id])
+    @datos_usuario = User.find(@datos_persona.user_id)
+
+    puts "=================================="
+    puts @datos_persona.inspect
+    puts @datos_usuario.inspect
+    puts "=================================="
+
+    respond_to do |format|
+      format.html
+      format.js
     end
   end
 

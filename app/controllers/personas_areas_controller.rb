@@ -1,10 +1,11 @@
 class PersonasAreasController < ApplicationController
+  include ManageStatus
   before_action :set_personas_area, only: %i[ show edit update destroy ]
   before_action :comprobar_permiso
 
   # GET /personas_areas or /personas_areas.json
   def index
-    @personas_areas = PersonasArea.where(:estado => 'A').order(:id)
+    @personas_areas = PersonasArea.where(estado: ['A', 'I']).order(:id)
    
   end
 
@@ -27,20 +28,18 @@ class PersonasAreasController < ApplicationController
     @personas_area.estado = "A"
     @personas_area.user_created_id = current_user.id
 
-    respond_to do |format|
-      if @personas_area.save
-        format.html { redirect_to personas_areas_path, notice: "La asignación usuario-persona fue creada" }
-        format.json { render :show, status: :created, location: @personas_area }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @personas_area.errors, status: :unprocessable_entity }
+    ActiveRecord::Base.transaction do
+      guardar_con_manejo_de_excepciones(@personas_area, "No se pudo asignar la persona - área", "Error de base de datos al asignar la persona - área")
+
+      respond_to do |format|
+        format.html { redirect_to personas_areas_url, notice: "La asignacion [ <strong>#{@personas_area.persona.nombre.upcase} - #{@personas_area.area.nombre.upcase}</strong> ] se ha creado correctamente.".html_safe }
+        format.json { render :show, status: :created, location: personas_areas_url }
       end
     end
   end
 
   # PATCH/PUT /personas_areas/1 or /personas_areas/1.json
   def update
-    
     persona_id = params[:personas_area][:persona_id]
     area_id = params[:personas_area][:area_id]
 
@@ -61,19 +60,16 @@ class PersonasAreasController < ApplicationController
 
         
       if @existencia_parametro.blank?
-
         #ACTUALIZA PORQUE NO EXISTE EN PARAMETRO 
         @personas_area.user_updated_id = current_user.id
-        respond_to do |format|
-          if @personas_area.update(personas_area_params)
-            format.html { redirect_to personas_areas_path, notice: "La asignación fue actualizada" }
-            format.json { render :show, status: :ok, location: @personas_area }
-          else
-            format.html { render :edit, status: :unprocessable_entity }
-            format.json { render json: @personas_area.errors, status: :unprocessable_entity }
-          end
-        end        
 
+        ActiveRecord::Base.transaction do
+          actualizar_con_manejo_de_excepciones(@personas_area, personas_area_params, "No se pudo actualizar el área", "Error de base de datos al actualizar el área")
+          respond_to do |format|
+            format.html { redirect_to personas_areas_url, notice: "La asignacion [ <strong>#{@personas_area.persona.nombre.upcase} - #{@personas_area.area.nombre.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+            format.json { render :show, status: :ok, location: personas_areas_url }
+          end
+        end       
       else
         #ELIMINA PRIMERO PARAMETROS Y DESPUES MODIFICA PERSONA AREA 
         @usuario_existe_parametro = Parametro.find(@existencia_parametro.id)
@@ -81,38 +77,27 @@ class PersonasAreasController < ApplicationController
         if @usuario_existe_parametro.destroy
           #YA ELIMINO AHORA MODIFICA PERSONA AREA
           @personas_area.user_updated_id = current_user.id
+
+          ActiveRecord::Base.transaction do
+            actualizar_con_manejo_de_excepciones(@personas_area, personas_area_params, "No se pudo actualizar el área", "Error de base de datos al actualizar el área")
             respond_to do |format|
-              if @personas_area.update(personas_area_params)
-                format.html { redirect_to personas_areas_path, notice: "La asignación fue actualizada" }
-                format.json { render :show, status: :ok, location: @personas_area }
-              else
-                format.html { render :edit, status: :unprocessable_entity }
-                format.json { render json: @personas_area.errors, status: :unprocessable_entity }
-              end
+              format.html { redirect_to personas_areas_url, notice: "La asignacion [ <strong>#{@personas_area.persona.nombre.upcase} - #{@personas_area.area.nombre.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+              format.json { render :show, status: :ok, location: personas_areas_url }
             end
-        else
-            
-            format.html { render :edit, status: :unprocessable_entity }
-            format.json { render json: @usuario_existe_parametro.errors, status: :unprocessable_entity }
-          
+          end
         end 
       end 
     else
-
       #SOLO ACTUALIZA SIN MODIFICAR PARAMETROS ES IGUAL
       @personas_area.user_updated_id = current_user.id
-      respond_to do |format|
-        if @personas_area.update(personas_area_params)
-          format.html { redirect_to personas_areas_path, notice: "La asignación fue actualizada" }
-          format.json { render :show, status: :ok, location: @personas_area }
-        else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @personas_area.errors, status: :unprocessable_entity }
+
+      ActiveRecord::Base.transaction do
+        actualizar_con_manejo_de_excepciones(@personas_area, personas_area_params, "No se pudo actualizar el área", "Error de base de datos al actualizar el área")
+        respond_to do |format|
+          format.html { redirect_to personas_areas_url, notice: "La asignacion [ <strong>#{@personas_area.persona.nombre.upcase} - #{@personas_area.area.nombre.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+          format.json { render :show, status: :ok, location: personas_areas_url }
         end
       end
-
-      
-
     end
   end
 
@@ -125,14 +110,15 @@ class PersonasAreasController < ApplicationController
     end
   end
 
- # Inactivar Usuario - Area
- def inactivar_usuario_area
-  @personas_area = PersonasArea.find(params[:id])
-  @cantidad_personas_area = PersonasArea.where('persona_id = ?', @personas_area.persona_id).count
-  
-  if @cantidad_personas_area > 1
-    @personas_area.user_updated_id = current_user.id
-    @personas_area.estado = "I"
+  # Inactivar Usuario - Area
+  def inactivar_usuario_area
+    @personas_area = PersonasArea.find(params[:id])
+    @cantidad_personas_area = PersonasArea.where('persona_id = ?', @personas_area.persona_id).count
+    
+    if @cantidad_personas_area > 1
+      @personas_area.user_updated_id = current_user.id
+      @personas_area.estado = "I"
+
       respond_to do |format|
         if @personas_area.save
           @existencia_parametro = Parametro.joins("inner join users on parametros.user_id = users.id
@@ -157,32 +143,24 @@ class PersonasAreasController < ApplicationController
                 format.json { render json: @parametro.errors, status: :unprocessable_entity }
               end  
             end 
-              
-
           end         
         else
           format.html { render :new, status: :unprocessable_entity }
           format.json { render json: @personas_area.errors, status: :unprocessable_entity }
         end
       end
-  else 
-    respond_to do |format|
-      format.html { redirect_to personas_areas_path, alert: "La persona no puede estar sin un área asignada." }
-      format.json { render :show, status: :created, location: @personas_area }
+    else 
+      respond_to do |format|
+        format.html { redirect_to personas_areas_path, alert: "La persona no puede estar sin un área asignada." }
+        format.json { render :show, status: :created, location: @personas_area }
+      end 
     end 
-  
-  end 
-  
-end
+  end
 
 #METODO PARA BUSCAR LAS AREAS POR EMPRESA
 def search_areas_by_empresa
   empresa_id = params[:empresa_id]
-  
-
 end
-
-
 
   private
     # Use callbacks to share common setup or constraints between actions.

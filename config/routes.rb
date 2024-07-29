@@ -57,6 +57,10 @@ Rails.application.routes.draw do
       member do
         get 'i' => "personas#inactivar", as: 'inactivar'
         get 'a' => "personas#activar", as: 'activar'
+        get 'cp' => "personas#conservar_password", as: 'conservar_password'
+        get 'mec' => "personas#modal_edit_email", as: 'edit_email'
+        patch 'update_email' => 'personas#update_email', as: 'update_email'
+        get 'reu' => "personas#remitente_email", as: 'remitente_email'
       end
     end
     get 'personas/show/:id' => "personas#show", as: 'ver_perfil'
@@ -64,7 +68,7 @@ Rails.application.routes.draw do
     patch 'personas/update'
     # get 'inactivar/:id' => "personas#inactivar", as: 'inactivar_user'
     # get 'activar/:id' => "personas#activar", as: 'activar_user'
-    get 'conservar_password/:id' => "personas#conservar_password", as: 'conservar_password_usuario'
+    # get 'conservar_password/:id' => "personas#conservar_password", as: 'conservar_password_usuario'
     #resources :personas , only: [:show, :edit, :update]
 
 
@@ -88,8 +92,12 @@ Rails.application.routes.draw do
     end
 
     #Manejo controller rol
-    resources :roles
-    get 'rol/inactivar/:id' => "roles#inactivar_rol", as: 'inactivar_rol'
+    resources :roles, :path => 'rol' do
+      member do
+        get 'i' => "roles#inactivar", as: 'inactivar'
+        get 'a' => "roles#activar", as: 'activar'
+      end
+    end
 
     #manejo de controller peresonas - areas
     resources :personas_areas

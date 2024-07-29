@@ -12,11 +12,24 @@ class UserMailer < ApplicationMailer
   end
 
   def registro_exitoso(usuario, temp_password, correo_electronico)
-    @email = correo_electronico
-    @temp_password = temp_password
-    @usuario = usuario
-    @ruta_url = "#{@base_url}/users/sign_in"
-    mail(to: @email, from: @from_url, subject: 'Bienvenido a sistema de punto de venta: tus credenciales de acceso.')
+    initialize_email_variables(usuario, temp_password, correo_electronico)
+    mail(to: correo_electronico, from: @from_url, subject: 'Bienvenido a sistema de formularios de calidad: tus credenciales de acceso.')
   end
 
+  def remitente_exitoso(usuario, temp_password, correo_electronico)
+    initialize_email_variables(usuario, temp_password, correo_electronico)
+    mail(to: @email, from: @from_url, subject: 'Bienvenido a sistema de proyectos y actividades: tus credenciales de acceso.')
+  end
+
+  private
+
+  def initialize_email_variables(usuario, temp_password, correo_electronico)
+    @usuario = usuario
+    @temp_password = temp_password
+    @correo_electronico = correo_electronico
+    @ruta_url = "#{@base_url}/users/sign_in"
+    @titulo_correo = "sistema de formularios de calidad - SIFOC"
+    @titulo_bienvenida = "Bienvenido, #{@usuario}, a #{@titulo_correo}."
+    @logo_correo = ""
+  end
 end

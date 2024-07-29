@@ -1,15 +1,15 @@
 <!-- Formulario Usuarios -->
-<div class="card shadow mb-4">
-  <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Registro Usuarios</h6>
-  </div>
-  <div class="card-body">
-    <% if flash[:alert].present? %>
+<%= simple_form_for :usuario_form, :url => {:controller => "usuarios", :action => "crear_usuario"}, defaults: { wrapper: :inline_field6 } do |f| %>
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h5 class="m-0 font-weight-bold text-primary">Gestión de Usuario</h5>
+    </div>
+    <div class="card-body">
+      <% if flash[:alert].present? %>
       <div class="alert alert-danger">
         <%= flash[:alert] %>
       </div>
-    <% end %>
-    <%= simple_form_for :usuario_form, :url => {:controller => "usuarios", :action => "crear_usuario"}, defaults: { wrapper: :inline_field6 } do |f| %>
+      <% end %>
       <div class="row">
         <div class="col-md-12">
           <h4>
@@ -59,30 +59,28 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12 text-right">
-          <br>
-          <br>
-          <%= link_to usuarios_index_path, class: "btn btn-outline-danger btn-sm mt-2" do %>
-            <span class="icon text-red-50">
-              <i class="fas fa-arrow-circle-left"></i>
+    </div>
+
+    <div class="card-footer shadow bg-transparent" style="background-color: #efefef !important;">
+      <div class="col-md-12 text-center">
+        <%= link_to usuarios_index_path, class: "btn btn-danger btn-sm mt-2" do %>
+          <span class="icon text-red-50">
+            <i class="fas fa-arrow-circle-left"></i>
+          </span>
+          <span class="text">CANCELAR</span>
+        <% end %>
+
+        <% if tiene_permiso("BOTON REGISTRAR", "VER") %>
+          <%= button_tag f.submit, 
+              class: "btn btn-success btn-sm mt-2 btn_event_usuario",
+              data: { evento: "Registrar", nombre: "el nuevo usuario" } do %>
+            <span class="icon text-50">
+              <i class="fas fa-edit"></i>
             </span>
-            <span class="text">CANCELAR</span>
-          <% end %>
-          <% if tiene_permiso("BOTON REGISTRAR", "VER") %>
-            <%= button_tag f.submit, 
-                class: "btn btn-success btn-sm mt-2 btn_event_usuario",
-                data: { evento: "Registrar", nombre: "el nuevo usuario" } do %>
-              <span class="icon text-50">
-                <i class="fas fa-edit"></i>
-              </span>
-              <span class="text">REGISTRAR</span>
-            <%end%>
-          <% end %>
-        </div>
+            <span class="text">REGISTRAR</span>
+          <%end%>
+        <% end %>
       </div>
-    <% end %>
+    </div>
   </div>
-</div>
-<br>
-<br>
+<% end %>
