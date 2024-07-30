@@ -41,6 +41,9 @@
       <img class="img-profile rounded-circle" src="<%= @foto_persona %>" style="border: 2px solid white;" width="70" height="70">
       <br>
       <span class="sidebar-brand-text mx-3" style="font-size: 50%;"><%= current_user.email %></span>
+      <% if !current_user_role.blank? %>
+        <span class="sidebar-brand-text mx-3" style="font-size: 72%;"><%= current_user_role %></span>
+      <% end %>
     </div>
   </a>
   <!-- Divider -->

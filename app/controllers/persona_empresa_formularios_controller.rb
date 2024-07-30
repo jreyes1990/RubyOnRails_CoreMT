@@ -7,7 +7,6 @@ class PersonaEmpresaFormulariosController < ApplicationController
   end
 
   def search_areas_persona
-
     id_persona = params[:area_empresa_persona_id_param]
     
     @empareas = PersonasArea.joins("inner join personas on personas.id = personas_areas.persona_id 
@@ -15,8 +14,8 @@ class PersonaEmpresaFormulariosController < ApplicationController
                                   and personas_areas.estado = 'A'")    
 
     respond_to do |format|
-        format.json { render json: @empareas.map { |p| { id: p.area_id, area: p.nombre_area} } }
-      end   
+      format.json { render json: @empareas.map { |p| { id: p.area_id, area: p.nombre_area} } }
+    end   
   end
 
   def consulta_permisos
@@ -69,53 +68,104 @@ class PersonaEmpresaFormulariosController < ApplicationController
 
   def mostrar_agregar_permisos
     @persona = Persona.find(session[:id_persona_consulta_permiso])
-       
     @area = Area.find(session[:id_area_persona_consulta_permiso]) 
-
     @menu_x_role = [];
-
   end
 
   def obtener_opciones_por_perfil
     role_id = params[:role_id]
-    @menu_x_role = MenuRol.where("rol_id = ?", role_id.to_i)
-
+    @persona_area = PersonasArea.where(persona_id: session[:id_persona_consulta_permiso], area_id: session[:id_area_persona_consulta_permiso]).first    
+    @opciones_cas = OpcionCa.where("exists(select x.* 
+                                           from persona_empresa_formularios x
+                                           where x.opcion_ca_id = opcion_cas.id
+                                           and x.personas_area_id = ?
+                                           )", @persona_area.id)
+    
+    @menu_x_role = MenuRol.eager_load(opcion: :opcion_cas)
+                          .where(menu_roles: { rol_id: role_id })
+                          .where.not(opcion_cas: { id: nil }).distinct
 
     respond_to do |format|
       if @menu_x_role.count > 0
         htmlGenerado = ""
-        atributosComponentes = ""
         
-
         @menu_x_role.each do |mxr|
-          atributosComponentes = ""
-          items = mxr.opcion.opcion_cas
-          items.each do |oc|
+          # Checkbox para seleccionar o deseleccionar todos los campos de atributos
+          select_deselect_all_checkbox = 
+          "
+            <li class='list-group-item d-flex justify-content-between align-items-center flex-wrap'>
+              <label for='select-all-#{mxr.opcion.nombre.upcase.gsub ' ', '_'}'>
+                <h6>SELECCIONAR</h6>
+              </label>
+              <span class='text-secondary'>
+                <label class='checkbox-label'>
+                  <strong style='padding-right: 5px;'>TODOS</strong>
+                    <input type='checkbox' id='select-all-#{mxr.opcion.nombre.upcase.gsub ' ', '_'}' checked=true>
+                  <span class='checkmark'></span>
+                </label>
+              </span>
+            </li>
+          "
             
-            atributosComponentes << "<li
-                                        class='list-group-item d-flex justify-content-between align-items-center flex-wrap'>
-                                        <h6>#{oc.componente.nombre}</h6>
-                                        <span class='text-secondary'>
-                                            #{oc.atributo.nombre}
-                                            <input type='checkbox' name='permisoids[]' value='#{oc.id}' checked=true/>
-                                        </span>
-                                    </li>"            
-          end
-          tarjeta = "<div class='col-md-4'>
-                        <div class='card border-bottom-success'>
-                            <div class='card-header text-success'>    
-                                #{mxr.opcion.menu.nombre}: #{mxr.opcion.nombre.upcase}                                            
-                            </div>
-                            <div class='card-body'>
-                                <div class='card mt-3'>
-                                    <ul class='list-group list-group-flush'>
-                                        #{atributosComponentes}
-                                    </ul>
-                                </div>
-                            </div>
-                          </div>
-                      </div>
-                    "
+          atributosComponentes = mxr.opcion.opcion_cas.where.not(id: @opciones_cas.ids).sort_by { |oc| "#{oc.opcion.id} #{oc.atributo.id} #{oc.componente.id}"}.reverse.map do |oc|
+          "
+            <li class='list-group-item d-flex justify-content-between align-items-center flex-wrap'>
+              <label for='#{oc.id}'>
+                <h6>#{oc.componente.nombre}</h6>
+              </label>
+              <span class='text-secondary'>  
+                <label class='checkbox-label'>
+                  <strong style='padding-right: 5px;'>#{oc.atributo.nombre}</strong>
+                    <input type='checkbox' name='permisoids[]' value='#{oc.id}' class='#{mxr.opcion.nombre.upcase.gsub " ", "_"}' id='#{oc.id}' checked=true/>
+                  <span class='checkmark's></span>
+                </label>
+              </span>
+            </li>
+          "   
+          end.join         
+          
+          # Concatenamos el checkbox adicional al inicio de la lista
+          atributosComponentes = select_deselect_all_checkbox << atributosComponentes
+
+          tarjeta = 
+          "
+            <div class='col-xs-12 col-sm-6 col-lg-4'>
+              <div class='card border-bottom-success'>
+                <div class='card-header text-success'>    
+                  <div class='row'>
+                    <div class='col-10 text-left mt-2'>
+                      <h6>#{mxr.opcion.menu.nombre.upcase}: <strong style='color: #f18313;'>#{mxr.opcion.nombre.upcase}</strong></h6>
+                    </div>
+                    <div class='col-2 text-right'>
+                      <a href='#' data-toggle='collapse' data-target='#collapse#{mxr.opcion.nombre.upcase.gsub ' ', '_'}' aria-expanded='true' class=''>
+                        <i class='icon-action fa fa-chevron-down mt-2' style='color:#6c6868'></i>                  
+                      </a>
+                    </div>
+                  </div>                                          
+                </div>
+                <div class='collapse' id='collapse#{mxr.opcion.nombre.upcase.gsub ' ', '_'}' style=''>
+                  <div class='card' style='padding: 10px;'>
+                    <div class='card mt-3'>
+                      <ul class='list-group list-group-flush'>
+                        #{atributosComponentes}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                <br>
+            </div>
+
+            <script>
+              document.getElementById('select-all-#{mxr.opcion.nombre.upcase.gsub " ", "_"}').onclick = function() {
+                var checkboxes = document.querySelectorAll('input[class=#{mxr.opcion.nombre.upcase.gsub " ", "_"}]');
+                for (var checkbox of checkboxes) {                                                      
+                  checkbox.checked = this.checked;
+                }
+              }
+            </script>
+          "
+
           htmlGenerado << tarjeta
         end
                                    
@@ -128,8 +178,7 @@ class PersonaEmpresaFormulariosController < ApplicationController
 
   def obtener_opciones_por_individual
     opcion_id = params[:opcion_id]
-    @atributos_x_opcion = OpcionCa.where("opcion_id = ?", opcion_id.to_i)
-
+    @atributos_x_opcion = OpcionCa.eager_load(opcion: :menu).where(opcion_id: opcion_id)
 
     respond_to do |format|
       if @atributos_x_opcion.count > 0
@@ -137,38 +186,86 @@ class PersonaEmpresaFormulariosController < ApplicationController
         atributosComponentes = ""
         nombreMenu = ""
         nombreOpcion = ""
+        nombreMenu = @atributos_x_opcion.first.opcion.menu.nombre.upcase
+        nombreOpcion = @atributos_x_opcion.first.opcion.nombre.upcase
 
-        @atributos_x_opcion.each do |oc|
-          
-            atributosComponentes << "<li
-                                        class='list-group-item d-flex justify-content-between align-items-center flex-wrap'>
-                                        <h6>#{oc.componente.nombre}</h6>
-                                        <span class='text-secondary'>
-                                            #{oc.atributo.nombre}
-                                            <input type='checkbox' name='permisoids[]' value='#{oc.id}' checked=true/>
-                                        </span>
-                                    </li>"  
+        # Checkbox para seleccionar o deseleccionar todos los campos de atributos
+        select_deselect_all_checkbox = 
+        "
+          <li class='list-group-item d-flex justify-content-between align-items-center flex-wrap'>
+            <label for='select-all-#{nombreOpcion.gsub ' ', '_'}'>
+              <h6>SELECCIONAR</h6>
+            </label>
+            <span class='text-secondary'>
+              <label class='checkbox-label'>
+                <strong style='padding-right: 5px;'>TODOS</strong>
+                  <input type='checkbox' id='select-all-#{nombreOpcion.gsub ' ', '_'}' checked=true>
+                <span class='checkmark'></span>
+              </label>
+            </span>
+          </li>
+        "
+        
+        atributosComponentes = @atributos_x_opcion.sort_by { |oc| "#{oc.opcion.id} #{oc.atributo.id} #{oc.componente.id}"}.reverse.map do |oc|
+        "
+          <li class='list-group-item d-flex justify-content-between align-items-center flex-wrap'>
+            <label for='#{oc.id}'>
+              <h6>#{oc.componente.nombre}</h6>
+            </label>
+            <span class='text-secondary'>  
+              <label class='checkbox-label'>
+                <strong style='padding-right: 5px;'>#{oc.atributo.nombre}</strong>
+                <input type='checkbox' name='permisoids[]' value='#{oc.id}' class='#{oc.opcion.nombre.upcase.gsub " ", "_"}' id='#{oc.id}' checked=true/>
+                <span class='checkmark's></span>
+              </label>
+            </span>
+          </li>
+        "
+        end.join
+        
+        # Concatenamos el checkbox adicional al inicio de la lista
+        atributosComponentes = select_deselect_all_checkbox << atributosComponentes
 
-          nombreMenu = oc.opcion.menu.nombre.upcase
-          nombreOpcion = oc.opcion.nombre.upcase
-        end
+        tarjeta = 
+        "
+          <div class='col-xs-12 col-sm-6 col-lg-4'>
+            <div class='card border-bottom-success'>
+              <div class='card-header text-success'>   
+                <div class='row'> 
+                  <div class='col-10 text-left mt-2'>
+                    <h6>#{nombreMenu}: <strong style='color: #f18313;'>#{nombreOpcion}</strong></h6>                                        
+                  </div>
+                  <div class='col-2 text-right'>
+                    <a href='#' data-toggle='collapse' data-target='#collapse#{nombreOpcion.gsub ' ', '_'}' aria-expanded='true' class=''>
+                      <i class='icon-action fa fa-chevron-down mt-2' style='color:#6c6868'></i>                  
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class='collapse' id='collapse#{nombreOpcion.gsub ' ', '_'}' style=''>
+                <div class='card' style='padding: 10px;'>
+                  <div class='card mt-3'>
+                    <ul class='list-group list-group-flush'>
+                      #{atributosComponentes}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+          </div>
 
-        tarjeta = "<div class='col-md-4'>
-                        <div class='card border-bottom-success'>
-                            <div class='card-header text-success'>    
-                                #{nombreMenu}: #{nombreOpcion}                                            
-                            </div>
-                            <div class='card-body'>
-                                <div class='card mt-3'>
-                                    <ul class='list-group list-group-flush'>
-                                        #{atributosComponentes}
-                                    </ul>
-                                </div>
-                            </div>
-                          </div>
-                      </div>
-                    "
-          htmlGenerado << tarjeta
+          <script>
+            document.getElementById('select-all-#{nombreOpcion.gsub " ", "_"}').onclick = function() {
+              var checkboxes = document.querySelectorAll('input[class=#{nombreOpcion.gsub " ", "_"}]');
+              for (var checkbox of checkboxes) {                                                      
+                checkbox.checked = this.checked;
+              }
+            }
+          </script>
+        "
+
+        htmlGenerado << tarjeta
                                      
         format.json { render json: { response: 1, data: htmlGenerado }  }
       else
@@ -178,43 +275,44 @@ class PersonaEmpresaFormulariosController < ApplicationController
   end
 
   def guardar_permisos
-    
     asigna_rol_persona = params[:add_permisos][:perfil_id]
-
-    @personaEA = PersonasArea.where("area_id = ? and persona_id = ?", session[:id_area_persona_consulta_permiso], session[:id_persona_consulta_permiso]).first    
     @permisosSeleccionados = params[:permisoids]
     @tipoAsignacion = ""
     @resultado = 0
+
+    @personaEA = PersonasArea.where("area_id = ? and persona_id = ?", session[:id_area_persona_consulta_permiso], session[:id_persona_consulta_permiso]).first    
+    
     if params_permisos[:options] == "0"
       @tipoAsignacion = "PERFIL"
     else
       @tipoAsignacion = "INDIVIDUAL"
     end
 
-      if !@permisosSeleccionados.nil?
-        @permisosSeleccionados.each do |acpo|
-          @permisoUsuario = PersonaEmpresaFormulario.new
-          @permisoUsuario.personas_area_id = @personaEA.id
-          @permisoUsuario.opcion_ca_id = acpo.to_i
-          @permisoUsuario.descripcion = @tipoAsignacion
-          @permisoUsuario.estado = "A"
-          @permisoUsuario.save                      
-        end
-        respond_to do |format|
-          format.html { redirect_to mostrar_permisos_path, notice: "Permisos otorgados al usuario exitosamente" }   
-        end
-        
-        if @tipoAsignacion == "PERFIL"
-          @actualizar_rol = PersonasArea.where("area_id = ? and persona_id = ?", session[:id_area_persona_consulta_permiso], session[:id_persona_consulta_permiso]).first.update(rol_id: asigna_rol_persona)
-          
-        end
-
-      else
-        respond_to do |format|
-          format.html { redirect_to mostrar_permisos_path, alert: "No se agregó ningun permiso" }             
-        end 
+    if !@permisosSeleccionados.nil?
+      @permisosSeleccionados.each do |acpo|
+        @permisoUsuario = PersonaEmpresaFormulario.new
+        @permisoUsuario.personas_area_id = @personaEA.id
+        @permisoUsuario.opcion_ca_id = acpo.to_i
+        @permisoUsuario.descripcion = @tipoAsignacion
+        @permisoUsuario.estado = "A"
+        @permisoUsuario.user_created_id = current_user.id
+        @permisoUsuario.save                      
       end
+
+      respond_to do |format|
+        format.html { redirect_to mostrar_permisos_path, notice: "Permisos otorgados al usuario exitosamente" }   
+      end
+      
+      if @tipoAsignacion == "PERFIL"
+        @actualizar_rol = PersonasArea.where("area_id = ? and persona_id = ?", session[:id_area_persona_consulta_permiso], session[:id_persona_consulta_permiso]).first.update(rol_id: asigna_rol_persona)
         
+      end
+
+    else
+      respond_to do |format|
+        format.html { redirect_to mostrar_permisos_path, alert: "No se agregó ningun permiso" }             
+      end 
+    end 
   end
   
   def eliminar_permiso
@@ -228,6 +326,18 @@ class PersonaEmpresaFormulariosController < ApplicationController
     end
   end
 
+  def eliminar_seleccionados
+    ids_seleccionados = params[:componentes_seleccionados]
+
+    if ids_seleccionados.present?
+      PersonaEmpresaFormulario.where(id: ids_seleccionados).destroy_all
+      flash[:notice] = 'Componentes seleccionados eliminados exitosamente.'
+    else
+      flash[:error] = 'Por favor, selecciona al menos un componente para eliminar.'
+    end
+
+    redirect_to mostrar_permisos_path
+  end
 
   def search_usuario
     parametro = params[:q].upcase

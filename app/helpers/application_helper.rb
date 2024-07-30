@@ -69,6 +69,15 @@ module ApplicationHelper
           return id_area
   end
 
+  def current_user_role
+    role_persona =  PersonasArea.select("roles.nombre as nombre_rol").left_joins(:persona, :area, :rol).where(personas: {user_id: current_user.id}).first
+
+    if !role_persona.nil?
+      if (!role_persona.nombre_rol.nil?)
+        return "#{role_persona.nombre_rol.upcase}"
+      end
+    end
+  end
 
   def is_active_controller_configuracion_titulo()
         @controladores = ["usuarios", "roles", "personas_areas", "menus", "opciones", "menu_roles", "atributos", "componentes", "opcion_cas", "persona_empresa_formularios", "empresas", "areas", "datos_externos", "detalle_datos_externos", "datos_apis", "clonar_catalogos"]

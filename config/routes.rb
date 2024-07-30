@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     get "/permisos/opc_perfil" => "persona_empresa_formularios#obtener_opciones_por_perfil", as: "obtener_opciones_por_perfil"
     get "/permisos/opc_individual" => "persona_empresa_formularios#obtener_opciones_por_individual", as: "obtener_opciones_por_individual"
     delete "/permisos/remove/:id" => "persona_empresa_formularios#eliminar_permiso", as: "eliminar_permiso"
+    post 'persona_empresa_formularios/eliminar_seleccionados', to: 'persona_empresa_formularios#eliminar_seleccionados', as: :eliminar_seleccionados_componentes
 
     #routs datos externos
     get "/detalle/datosexterno/:dato_externo_id" => "datos_externos#index_detalle_datos_externo", as: "index_detalle_datos_externo"
