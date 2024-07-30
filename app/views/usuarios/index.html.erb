@@ -41,11 +41,11 @@
               <th class="text-center">Última Sesión</th>
               <th class="text-center">IP Última</th>
               <th class="text-center"> Estado </th>
-              <th class="text-center"></th>
-              <th class="text-center"></th>
               <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
               <th class="text-center"></th>
               <% end %>
+              <th class="text-center"></th>
+              <th class="text-center"></th>
               <% if tiene_permiso("BOTON ACTIVAR/INACTIVAR REGISTRO", "VER") %>
               <th class="text-center"></th>
               <% end %>
@@ -64,7 +64,17 @@
                 <td class="text-center"><%= p.current_sign_in_ip %></td>
                 <td class="text-center"><%= p.last_sign_in_at %></td>
                 <td class="text-center"><%= p.last_sign_in_ip %></td>
-                <td class="text-center"> <%= p.estado %> </td>
+                <td class="text-center"> <%= format_estado(p.estado) %> </td>
+                <td class="text-center">
+                <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
+                  <%= link_to edit_email_persona_path(:id => p.id), 
+                              class: "btn btn-outline-info btn-sm",
+                              remote: true, data: {toggle: "modal", target: "#modal-content-edit-email"},
+                              "data-custom-class": "popover-info", title: "ACTUALIZAR CORREO", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
+                    <i class="fas fa-user-edit"></i>
+                  <% end %>
+                <% end %>
+                </td>
                 <td class="text-center">
                 <% if (p.cambio_password =='f' || p.cambio_password == false) && p.estado == 'A' %>
                   <%= link_to conservar_password_persona_path(:id => p.id), 
@@ -77,29 +87,19 @@
                 </td>
                 <td class="text-center">
                 <% if (p.cambio_password =='f' || p.cambio_password == false) && p.estado == 'A' %>
-                  <%= link_to remitente_email_usuario_path(:id => p.id, :flag_cambio_password => 0), 
-                      class: "btn btn-outline-primary btn-sm ", 
-                      data: { confirm: 'Desea Enviar las credenciales' }, 
-                      "data-custom-class": "popover-primary", title: "ENVIAR EMAIL", "data-content": "#{p.nombre.upcase} #{p.apellido.upcase}" do %>
+                  <%= link_to remitente_email_persona_path(:id => p.id, :flag_cambio_password => 0), 
+                      class: "btn btn-outline-primary btn-sm btn_enviar_credencial", 
+                      data: { evento: "Enviar", "retorna-formulario": "NO", nombre: "las credenciales a #{p.nombre.upcase} #{p.apellido.upcase}" },
+                      "data-custom-class": "popover-primary", title: "ENVIAR CREDENCIALES", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
                     <i class="fas fa-envelope-open-text"></i>
                   <% end %> 
                 <% elsif (p.cambio_password =='t' || p.cambio_password == true) && p.estado == 'A' %>
-                  <%= link_to remitente_email_usuario_path(:id => p.id, :flag_cambio_password => 1), 
-                      class: "btn btn-outline-success btn-sm ", 
-                      data: { confirm: 'Desea Enviar las credenciales' }, 
-                      "data-custom-class": "popover-success", title: "ENVIAR EMAIL", "data-content": "#{p.nombre.upcase} #{p.apellido.upcase}" do %>
+                  <%= link_to remitente_email_persona_path(:id => p.id, :flag_cambio_password => 1), 
+                      class: "btn btn-outline-success btn-sm btn_enviar_credencial", 
+                      data: { evento: "Enviar", "retorna-formulario": "NO", nombre: "las credenciales a #{p.nombre.upcase} #{p.apellido.upcase}" },
+                      "data-custom-class": "popover-success", title: "ENVIAR CREDENCIALES", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
                   <i class="fas fa-envelope-open-text"></i>
                   <% end %> 
-                <% end %>
-                </td>
-                <td class="text-center">
-                <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
-                  <%= link_to edit_email_persona_path(:id => p.id), 
-                              class: "btn btn-outline-info btn-sm",
-                              remote: true, data: {toggle: "modal", target: "#modal-content-edit-email"},
-                              "data-custom-class": "popover-info", title: "CAMBIAR CORREO", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
-                    <i class="fas fa-user-edit"></i>
-                  <% end %>
                 <% end %>
                 </td>
                 <td class="text-center">

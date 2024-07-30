@@ -88,10 +88,4 @@ class UsuariosController < ApplicationController
     def persona_area_params
       params.require(:usuario_form).permit(:persona_id, :area_id, :rol_id, :user_created_id, :estado)
     end
-
-    def generate_temp_password(length = 8)
-      chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a + %w(! @ # $ % & *)
-      password = Array.new(length) { chars.sample }.join
-      password
-    end
 end

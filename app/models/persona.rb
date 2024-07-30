@@ -22,7 +22,6 @@ class Persona < ApplicationRecord
   has_many :personas_areas
   validates :nombre, :apellido, :direccion, :telefono, presence: false
 
-
   def nombre_completo
     "#{self.nombre} #{self.apellido}"
   end

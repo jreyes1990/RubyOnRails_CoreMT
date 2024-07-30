@@ -146,30 +146,34 @@ class PersonasController < ApplicationController
   end
 
   def remitente_email
-    @personas = Persona.find(params[:id])
-    @usuario = User.find(@personas.user_id)
+    @persona = Persona.find(params[:id])
+    @usuario = User.find(@persona.user_id)
     @usuario.password = generate_temp_password
     @usuario.user_updated_id = current_user.id
-    @nombre_completo = @personas.nombre + " " + @personas.apellido
+    @nombre_completo = @persona.nombre + " " + @persona.apellido
     @bandera_estado_password = params[:flag_cambio_password].to_i
 
     if @bandera_estado_password == 1
-      puts "EL USUARIO YA CAMBIO LA CONTRASEÑA #{@bandera_estado_password}"
       @usuario.password_changed = "f" || false
-    else
-      puts "EL USUARIO ESTA PENDIENTE DE CAMBIAR LA CONTRASEÑA #{@bandera_estado_password}"
     end
 
-    respond_to do |format|
-      if @usuario.save
-        # Envío de correo electrónico
-        UserMailer.remitente_exitoso(@nombre_completo, @usuario.password, @usuario.email).deliver_now
-        format.html { redirect_to usuarios_index_path, notice: "Las credenciales del usuario #{@nombre_completo} se ha enviado exitosamente" }
-        format.json { render :show, status: :created, location: @usuario }
-      else
-        format.html { redirect_to usuarios_index_path, alert: "Ocurrio un error al Activar la Persona y Usuario, Verifique!!..." }
-        format.json { render json: @usuario.errors, status: :unprocessable_entity }
+    begin
+      ActiveRecord::Base.transaction do
+        guardar_con_manejo_de_excepciones(@usuario, "No se pudo generar las credenciales del usuario", "Error de base de datos al generar las credenciales del usuario")
+
+        respond_to do |format|
+          # Envío de correo electrónico
+        UserMailer.registro_exitoso(@nombre_completo, @usuario.password, @usuario.email).deliver_now
+          format.html { redirect_to usuarios_index_path, notice: "Las credenciales del usuario [ <strong>#{@nombre_completo.upcase}</strong> ] se ha generado y enviado exitosamente".html_safe }
+          format.json { render :show, status: :ok, location: @usuario }
+        end
       end
+    rescue ActiveRecord::RecordNotFound => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue StandardError => e
+      handle_standard_error(e, usuarios_index_path)
     end
   end
 
@@ -185,6 +189,28 @@ class PersonasController < ApplicationController
     respond_to do |format|
       format.html
       format.js
+    end
+  end
+
+  def update_email
+    begin
+      ActiveRecord::Base.transaction do
+        @persona = Persona.find(params[:id])
+        @usuario = User.find(@persona.user_id)
+
+        actualizar_con_manejo_de_excepciones(@usuario, user_params, "No se pudo actualizar el correo del usuario", "Error de base de datos al actualizar el correo del usuario")
+
+        respond_to do |format|
+          format.html { redirect_to usuarios_index_path, notice: "El correo electronico del usuario [ <strong>#{@persona.nombre.upcase} #{@persona.apellido.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+          format.json { render :show, status: :ok, location: usuarios_index_path }
+        end
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
+      handle_standard_error(e, usuarios_index_path)
+    rescue StandardError => e
+      handle_standard_error(e, usuarios_index_path)
     end
   end
 
@@ -260,5 +286,9 @@ class PersonasController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def persona_params
       params.require(:persona).permit(:foto, :nombre, :apellido, :direccion, :telefono, :user_updated_id)
+    end
+
+    def user_params
+      params.require(:user).permit(:email)
     end
 end

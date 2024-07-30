@@ -115,4 +115,5 @@ document.addEventListener("turbolinks:load", function () {
     confirmSave('.btn_event_persona_area');
 
     confirmSave('.btn_password_usuario');
+    confirmSave('.btn_enviar_credencial');
 });

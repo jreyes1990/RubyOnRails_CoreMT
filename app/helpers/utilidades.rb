@@ -202,6 +202,12 @@ module Utilidades
     return respuesta
   end
 
+  def generate_temp_password(length = 12)
+    chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a + %w(! @ # $ % & *)
+    password = Array.new(length) { chars.sample }.join
+    password
+  end
+
   def genera_bitacora_catalogos(id_empresa, nombre_catalogo)
 
     t = Time.now
