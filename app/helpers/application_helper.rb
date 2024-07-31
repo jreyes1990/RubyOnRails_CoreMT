@@ -1,7 +1,7 @@
 module ApplicationHelper
-    include Utilidades 
+    include Utilidades
     include Permisos
-    
+
     def current_user_name
         persona = Persona.where("user_id = ? ", current_user.id).first
         if (persona != nil) then
@@ -24,8 +24,8 @@ module ApplicationHelper
         return nombre_area
       else
         return nombre_area = ''
-      end 
-    end 
+      end
+    end
 
     def current_nombre_area_empresa_controller
       parametros_area = Parametro.where(:user_id => current_user.id).first
@@ -34,19 +34,19 @@ module ApplicationHelper
         return nombre_area_empresa
       else
         return nombre_area_empresa = ''
-      end 
-    end 
+      end
+    end
 
     def helper_current_user_empresa_id
         id_empresa_actual = 0
         parametros = Parametro.where(:user_id => current_user.id).first
 
         if (parametros != nil) then
-            id_empresa_actual = parametros.empresa_id        
+            id_empresa_actual = parametros.empresa_id
             return id_empresa_actual
         else
             return id_empresa_actual = ''
-        end       
+        end
     end
 
     def helper_current_area_id_user
@@ -70,12 +70,19 @@ module ApplicationHelper
   end
 
   def current_user_role
-    role_persona =  PersonasArea.select("roles.nombre as nombre_rol").left_joins(:persona, :area, :rol).where(personas: {user_id: current_user.id}).first
+    search_params = Parametro.where(user_id: current_user.id).first
+    role_persona =  PersonasArea.select("roles.nombre as nombre_rol")
+                                .left_joins(:persona, :area, :rol)
+                                .where(personas_areas: {areas: {empresa_id: search_params.empresa_id}, area_id: search_params.area_id, personas: {user_id: search_params.user_id}}).first
 
-    if !role_persona.nil?
-      if (!role_persona.nombre_rol.nil?)
+    if role_persona.present?
+      if role_persona.nombre_rol.present?
         return "#{role_persona.nombre_rol.upcase}"
+      else
+        return ""
       end
+    else
+      return ""
     end
   end
 
@@ -194,7 +201,7 @@ module ApplicationHelper
     def is_active_action(controller)
 
         if params[:controller] == controller
-            "collapse-item active" 
+            "collapse-item active"
         else
             "collapse-item"
         end
@@ -203,7 +210,7 @@ module ApplicationHelper
 
     def is_home_active()
         if params[:controller] == "home"
-            "nav-item active" 
+            "nav-item active"
         else
             "nav-item"
         end
@@ -268,5 +275,3 @@ module ApplicationHelper
   end
 
 end
-
-

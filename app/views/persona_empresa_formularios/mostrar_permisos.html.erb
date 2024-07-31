@@ -223,8 +223,7 @@
                                     <th></th>
                                     <th>
                                     <% if tiene_permiso("BOTON ELIMINAR REGISTRO", "VER") %>
-                                      <%= check_box_tag "componentes_seleccionados[]", opf.id, false, class: "componente-checkbox", id: opf.id, style: 'margin-right: 5px;' %>
-                                      <i class="fas fa-trash fa-lg" style="color: #f56363;"></i>  
+                                      <%= check_box_tag "componentes_seleccionados[]", opf.id, false, class: "componente-checkbox", id: opf.id, style: 'margin-right: 5px;' %>  
                                     <% end %>
                                     </th>
                                   </tr>

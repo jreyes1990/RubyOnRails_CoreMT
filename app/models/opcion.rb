@@ -16,16 +16,16 @@
 #  updated_at      :datetime         not null
 #
 class Opcion < ApplicationRecord
-  belongs_to :menu, class_name: "Menu"
+  belongs_to :menu
   has_many :menu_roles
   has_many :opcion_cas
-  validates_presence_of :nombre, :descripcion, :icono, :path, :controlador, message: ": este campo es obligatorio"  
-  
+  validates_presence_of :nombre, :descripcion, :icono, :path, :controlador, message: ": este campo es obligatorio"
+
   def nombre_con_menu
     "#{self.menu.nombre} - #{self.nombre}"
   end
 
-  def opcion_nombre_id 
+  def opcion_nombre_id
     "#{self.id}-#{self.nombre}"
   end
 
