@@ -27,13 +27,12 @@ class RolesController < ApplicationController
     @rol.estado = "A"
     @rol.user_created_id = current_user.id
 
-    respond_to do |format|
-      if @rol.save
-        format.html { redirect_to roles_path, notice: "Rol creado" }
-        format.json { render :show, status: :created, location: @rol }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @rol.errors, status: :unprocessable_entity }
+    ActiveRecord::Base.transaction do
+      guardar_con_manejo_de_excepciones(@rol, "No se pudo crear el rol", "Error de base de datos al crear el rol")
+
+      respond_to do |format|
+        format.html { redirect_to roles_url, notice: "El rol [ <strong>#{@rol.nombre.upcase}</strong> ] se ha creado correctamente.".html_safe }
+        format.json { render :show, status: :created, location: roles_url }
       end
     end
   end
@@ -41,13 +40,12 @@ class RolesController < ApplicationController
   # PATCH/PUT /roles/1 or /roles/1.json
   def update
     @rol.user_updated_id = current_user.id
-    respond_to do |format|
-      if @rol.update(rol_params)
-        format.html { redirect_to roles_path, notice: "Rol Actualizado" }
-        format.json { render :show, status: :ok, location: @rol }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @rol.errors, status: :unprocessable_entity }
+
+    ActiveRecord::Base.transaction do
+      actualizar_con_manejo_de_excepciones(@rol, rol_params, "No se pudo actualizar el rol", "Error de base de datos al actualizar el rol")
+      respond_to do |format|
+        format.html { redirect_to roles_url, notice: "El rol [ <strong>#{@rol.nombre.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+        format.json { render :show, status: :ok, location: roles_url }
       end
     end
   end
@@ -78,6 +76,6 @@ class RolesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def rol_params
-      params.require(:rol).permit(:nombre, :descripcion)
+      params.require(:rol).permit(Rol.attribute_names.map(&:to_sym))
     end
 end
