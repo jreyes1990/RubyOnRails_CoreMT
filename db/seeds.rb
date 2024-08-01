@@ -3,7 +3,7 @@ usuarios = [
 ]
 
 # Desactiva temporalmente el callback que crea una entrada en personas
-User.skip_callback(:create, :after, :set_persona) if User.respond_to?(:skip_callback)
+# User.skip_callback(:create, :after, :set_persona) if User.respond_to?(:skip_callback)
 
 usuarios.each do |user_params|
   usuario = User.find_or_initialize_by(email: user_params[:email])
@@ -19,7 +19,7 @@ usuarios.each do |user_params|
 end
 
 # Reactiva el callback después de la creación de los usuarios
-User.set_callback(:create, :after, :set_persona) if User.respond_to?(:set_callback)
+# User.set_callback(:create, :after, :set_persona) if User.respond_to?(:set_callback)
 
 personas = [
   { nombre: "Developer", apellido: "Madre Tierra", direccion: "Santa Lucia Cotzumalguapa", estado: "A", telefono: "66854900", user_id: 1, user_created_id: 1 }
@@ -147,6 +147,7 @@ componentes = [
   { nombre: "MENU USUARIO AREA", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
   { nombre: "MENU ROL", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
   { nombre: "MENU MENU", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
+  { nombre: "MENU SUB OPCION", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
   { nombre: "MENU OPCION MENU", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
   { nombre: "MENU MENU ROL", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
   { nombre: "MENU ATRIBUTO", descripcion: "Validación del Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil },
@@ -187,19 +188,38 @@ menus.each do |menu_params|
   end
 end
 
+sub_opciones = [
+  {nombre: "OPCIONES:", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {nombre: "PERMISOS:", estado: "A", user_created_id: 1, user_updated_id: nil}
+]
+
+sub_opciones.each do |sub_opcion_params|
+  sub_opcion = SubOpcion.find_or_initialize_by(nombre: sub_opcion_params[:nombre])
+
+  if sub_opcion.persisted?  # Verifica si el menú ya existe en la base de datos
+    sub_opcion.update!(sub_opcion_params)
+    puts "SubOpción '#{sub_opcion_params[:nombre]}' actualizado"
+  else
+    sub_opcion.assign_attributes(sub_opcion_params)
+    sub_opcion.save!
+    puts "SubOpción '#{sub_opcion_params[:nombre]}' creado"
+  end
+end
+
 opciones = [
-  {menu_id: 1, nombre: "Usuarios", componente_sidebar: "MENU USUARIOS", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:",descripcion: "Opción del menú para la administración de los usuarios del sistema.", icono: "fas fa-users", path: "usuarios_index_path", controlador: "usuarios", posicion: 3, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Empresas", componente_sidebar: "MENU EMPRESAS", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de las empresas del sistema.", icono: "fas fa-building", path: "empresas_path", controlador: "empresas", posicion: 1, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Áreas - Empresa", componente_sidebar: "MENU AREAS EMPRESA", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de las áreas por empresa del sistema.", icono: "fas fa-sitemap", path: "areas_path", controlador: "areas", posicion: 2, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Usuarios - Área", componente_sidebar: "MENU USUARIO AREA", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de las asignaciones del los usuarios a areas del sistema.", icono: "fas fa-users", path: "personas_areas_path", controlador: "personas_areas", posicion: 4, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Roles", componente_sidebar: "MENU ROL", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de los roles del sistema.", icono: "fas fa-user-tag", path: "roles_path", controlador: "roles", posicion: 5, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Menús", componente_sidebar: "MENU MENU", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de los menús del sistema.", icono: "fab fa-elementor", path: "menus_path", controlador: "menus", posicion: 6, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Opciones - Menú", componente_sidebar: "MENU OPCION MENU", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de las opciones por menú del sistema.", icono: "fas fa-minus-square", path: "opciones_path", controlador: "opciones", posicion: 7, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Menús - Rol", componente_sidebar: "MENU MENU ROL", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de los menús por rol del sistema.", icono: "fas fa-user-cog", path: "menu_roles_path", controlador: "menu_roles", posicion: 8, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Atributos", componente_sidebar: "MENU ATRIBUTO", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de los atributos del sistema.", icono: "fas fa-atom", path: "atributos_path", controlador: "atributos", posicion: 9, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Componentes", componente_sidebar: "MENU COMPONENTE", sub_opcion_id: 1, nombre_sub_opcion: "OPCIONES:", descripcion: "Opción del menú para la administración de los componentes del sistema.", icono: "fab fa-codepen", path: "componentes_path", controlador: "componentes", posicion: 10, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Permisos Formulario", componente_sidebar: "MENU PERMISOS FORMULARIO", sub_opcion_id: 2, nombre_sub_opcion: "PERMISOS:", descripcion: "Opción del menú para la administración de los permisos por formulario del sistema.", icono: "fas fa-clipboard-list", path: "opcion_cas_path", controlador: "opcion_cas", posicion: 11, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
-  {menu_id: 1, nombre: "Permisos Usuario", componente_sidebar: "MENU PERMISOS USUARIO", sub_opcion_id: 2, nombre_sub_opcion: "PERMISOS:", descripcion: "Opción del menú para la administración de los permisos por usuario del sistema.", icono: "fas fa-clipboard-list", path: "permisos_path", controlador: "persona_empresa_formularios", posicion: 12, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil}
+  {menu_id: 1, nombre: "Usuarios", componente_sidebar: "MENU USUARIOS", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de los usuarios del sistema.", icono: "fas fa-users", path: "usuarios_index_path", controlador: "usuarios", posicion: 3, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Empresas", componente_sidebar: "MENU EMPRESAS", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de las empresas del sistema.", icono: "fas fa-building", path: "empresas_path", controlador: "empresas", posicion: 1, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Áreas - Empresa", componente_sidebar: "MENU AREAS EMPRESA", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de las áreas por empresa del sistema.", icono: "fas fa-sitemap", path: "areas_path", controlador: "areas", posicion: 2, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Usuarios - Área", componente_sidebar: "MENU USUARIO AREA", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de las asignaciones del los usuarios a areas del sistema.", icono: "fas fa-users", path: "personas_areas_path", controlador: "personas_areas", posicion: 4, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Roles", componente_sidebar: "MENU ROL", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de los roles del sistema.", icono: "fas fa-user-tag", path: "roles_path", controlador: "roles", posicion: 5, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Menús", componente_sidebar: "MENU MENU", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de los menús del sistema.", icono: "fab fa-elementor", path: "menus_path", controlador: "menus", posicion: 6, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Sub Opcion", componente_sidebar: "MENU SUB OPCION", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de las opciones por menú del sistema.", icono: "fas fa-minus-square", path: "sub_opciones_path", controlador: "sub_opciones", posicion: 7, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Opciones - Menú", componente_sidebar: "MENU OPCION MENU", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de las opciones por menú del sistema.", icono: "fas fa-minus-square", path: "opciones_path", controlador: "opciones", posicion: 8, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Menús - Rol", componente_sidebar: "MENU MENU ROL", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de los menús por rol del sistema.", icono: "fas fa-user-cog", path: "menu_roles_path", controlador: "menu_roles", posicion: 9, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Atributos", componente_sidebar: "MENU ATRIBUTO", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de los atributos del sistema.", icono: "fas fa-atom", path: "atributos_path", controlador: "atributos", posicion: 10, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Componentes", componente_sidebar: "MENU COMPONENTE", sub_opcion_id: 1, descripcion: "Opción del menú para la administración de los componentes del sistema.", icono: "fab fa-codepen", path: "componentes_path", controlador: "componentes", posicion: 11, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Permisos Formulario", componente_sidebar: "MENU PERMISOS FORMULARIO", sub_opcion_id: 2, descripcion: "Opción del menú para la administración de los permisos por formulario del sistema.", icono: "fas fa-clipboard-list", path: "opcion_cas_path", controlador: "opcion_cas", posicion: 12, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil},
+  {menu_id: 1, nombre: "Permisos Usuario", componente_sidebar: "MENU PERMISOS USUARIO", sub_opcion_id: 2, descripcion: "Opción del menú para la administración de los permisos por usuario del sistema.", icono: "fas fa-clipboard-list", path: "permisos_path", controlador: "persona_empresa_formularios", posicion: 13, visible_sidebar: true, estado: "A", user_created_id: 1, user_updated_id: nil}
 ]
 
 opciones.each do |opcion_params|
@@ -222,12 +242,13 @@ menu_roles = [
   {rol_id: 1, opcion_id: 4, menu_id: 1, descripcion: "Asignación de Opción-Menú [Usuarios - Área] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {rol_id: 1, opcion_id: 5, menu_id: 1, descripcion: "Asignación de Opción-Menú [Roles] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {rol_id: 1, opcion_id: 6, menu_id: 1, descripcion: "Asignación de Opción-Menú [Menús] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {rol_id: 1, opcion_id: 7, menu_id: 1, descripcion: "Asignación de Opción-Menú [Opciones - Menú] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {rol_id: 1, opcion_id: 8, menu_id: 1, descripcion: "Asignación de Opción-Menú [Menús - Rol] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {rol_id: 1, opcion_id: 9, menu_id: 1, descripcion: "Asignación de Opción-Menú [Atributos] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {rol_id: 1, opcion_id: 10, menu_id: 1, descripcion: "Asignación de Opción-Menú [Componentes] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {rol_id: 1, opcion_id: 11, menu_id: 1, descripcion: "Asignación de Opción-Menú [Permisos Formulario] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {rol_id: 1, opcion_id: 12, menu_id: 1, descripcion: "Asignación de Opción-Menú [Permisos Usuario] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil}
+  {rol_id: 1, opcion_id: 7, menu_id: 1, descripcion: "Asignación de Opción-Menú [SubOpción - Opción] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {rol_id: 1, opcion_id: 8, menu_id: 1, descripcion: "Asignación de Opción-Menú [Opciones - Menú] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {rol_id: 1, opcion_id: 9, menu_id: 1, descripcion: "Asignación de Opción-Menú [Menús - Rol] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {rol_id: 1, opcion_id: 10, menu_id: 1, descripcion: "Asignación de Opción-Menú [Atributos] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {rol_id: 1, opcion_id: 11, menu_id: 1, descripcion: "Asignación de Opción-Menú [Componentes] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {rol_id: 1, opcion_id: 12, menu_id: 1, descripcion: "Asignación de Opción-Menú [Permisos Formulario] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {rol_id: 1, opcion_id: 13, menu_id: 1, descripcion: "Asignación de Opción-Menú [Permisos Usuario] por rol.", estado: "A", user_created_id: 1, user_updated_id: nil}
 ]
 
 menu_roles.each do |menurol_params|
@@ -314,11 +335,7 @@ opcion_cas = [
   {opcion_id: 7, componente_id: 4, atributo_id: 1, descripcion: "Permiso del botón editar un registro.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 7, componente_id: 5, atributo_id: 1, descripcion: "Permiso del botón eliminar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 7, componente_id: 6, atributo_id: 1, descripcion: "Permiso del botón activar/inactivar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {opcion_id: 7, componente_id: 7, atributo_id: 1, descripcion: "Permiso del botón registrar desde un modal.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {opcion_id: 7, componente_id: 8, atributo_id: 1, descripcion: "Permiso del botón modulo carga masiva.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 7, componente_id: 9, atributo_id: 1, descripcion: "Permiso del botón descarga.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {opcion_id: 7, componente_id: 10, atributo_id: 1, descripcion: "Permiso del botón carga masiva.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {opcion_id: 7, componente_id: 14, atributo_id: 1, descripcion: "Permiso del botón filtro de parametros.", estado: "A", user_created_id: 1, user_updated_id: nil},
 
   {opcion_id: 8, componente_id: 22, atributo_id: 3, descripcion: "Permiso para ver la opción en el Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 8, componente_id: 1, atributo_id: 2, descripcion: "Permiso para acceder al modulo.", estado: "A", user_created_id: 1, user_updated_id: nil},
@@ -327,7 +344,11 @@ opcion_cas = [
   {opcion_id: 8, componente_id: 4, atributo_id: 1, descripcion: "Permiso del botón editar un registro.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 8, componente_id: 5, atributo_id: 1, descripcion: "Permiso del botón eliminar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 8, componente_id: 6, atributo_id: 1, descripcion: "Permiso del botón activar/inactivar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 8, componente_id: 7, atributo_id: 1, descripcion: "Permiso del botón registrar desde un modal.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 8, componente_id: 8, atributo_id: 1, descripcion: "Permiso del botón modulo carga masiva.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 8, componente_id: 9, atributo_id: 1, descripcion: "Permiso del botón descarga.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 8, componente_id: 10, atributo_id: 1, descripcion: "Permiso del botón carga masiva.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 8, componente_id: 14, atributo_id: 1, descripcion: "Permiso del botón filtro de parametros.", estado: "A", user_created_id: 1, user_updated_id: nil},
 
   {opcion_id: 9, componente_id: 23, atributo_id: 3, descripcion: "Permiso para ver la opción en el Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 9, componente_id: 1, atributo_id: 2, descripcion: "Permiso para acceder al modulo.", estado: "A", user_created_id: 1, user_updated_id: nil},
@@ -363,7 +384,16 @@ opcion_cas = [
   {opcion_id: 12, componente_id: 4, atributo_id: 1, descripcion: "Permiso del botón editar un registro.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 12, componente_id: 5, atributo_id: 1, descripcion: "Permiso del botón eliminar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
   {opcion_id: 12, componente_id: 6, atributo_id: 1, descripcion: "Permiso del botón activar/inactivar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {opcion_id: 12, componente_id: 9, atributo_id: 1, descripcion: "Permiso del botón descarga.", estado: "A", user_created_id: 1, user_updated_id: nil}
+  {opcion_id: 12, componente_id: 9, atributo_id: 1, descripcion: "Permiso del botón descarga.", estado: "A", user_created_id: 1, user_updated_id: nil},
+
+  {opcion_id: 13, componente_id: 27, atributo_id: 3, descripcion: "Permiso para ver la opción en el Sidebar.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 1, atributo_id: 2, descripcion: "Permiso para acceder al modulo.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 2, atributo_id: 1, descripcion: "Permiso del botón nuevo registro.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 3, atributo_id: 1, descripcion: "Permiso del botón registrar.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 4, atributo_id: 1, descripcion: "Permiso del botón editar un registro.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 5, atributo_id: 1, descripcion: "Permiso del botón eliminar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 6, atributo_id: 1, descripcion: "Permiso del botón activar/inactivar un regitro.", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {opcion_id: 13, componente_id: 9, atributo_id: 1, descripcion: "Permiso del botón descarga.", estado: "A", user_created_id: 1, user_updated_id: nil}
 ]
 
 opcion_cas.each do |opcionca_params|
@@ -488,7 +518,15 @@ pers_emp_forms = [
   {personas_area_id: 1, opcion_ca_id: 106, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
   {personas_area_id: 1, opcion_ca_id: 107, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
   {personas_area_id: 1, opcion_ca_id: 108, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
-  {personas_area_id: 1, opcion_ca_id: 109, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil}
+  {personas_area_id: 1, opcion_ca_id: 109, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 110, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 111, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 112, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 113, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 114, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 115, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 116, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil},
+  {personas_area_id: 1, opcion_ca_id: 117, descripcion: "PERFIL", estado: "A", user_created_id: 1, user_updated_id: nil}
 ]
 
 pers_emp_forms.each do |pers_emp_form_params|

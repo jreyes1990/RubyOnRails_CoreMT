@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Sub Opciones</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripcion</th>
+      <th>User created</th>
+      <th>User updated</th>
+      <th>Estado</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sub_opciones.each do |sub_opcion| %>
+      <tr>
+        <td><%= sub_opcion.nombre %></td>
+        <td><%= sub_opcion.descripcion %></td>
+        <td><%= sub_opcion.user_created_id %></td>
+        <td><%= sub_opcion.user_updated_id %></td>
+        <td><%= sub_opcion.estado %></td>
+        <td><%= link_to 'Show', sub_opcion %></td>
+        <td><%= link_to 'Edit', edit_sub_opcion_path(sub_opcion) %></td>
+        <td><%= link_to 'Destroy', sub_opcion, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Sub Opcion', new_sub_opcion_path %>

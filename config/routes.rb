@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
 
+  resources :sub_opciones, :path => 'opcion' do
+    member do
+      get 'i' => "opciones#inactivar", as: 'inactivar'
+      get 'a' => "opciones#activar", as: 'activar'
+    end
+  end
+  
   #Manejo de gema Devise
   devise_for :users
   root 'home#index'
@@ -77,7 +84,7 @@ Rails.application.routes.draw do
     post "home/registrar_area_temporal"
 
     #Manejo controller empresas
-    resources :empresas, :path => 'emp' do
+    resources :empresas, :path => 'empresa' do
       member do
         get 'i' => "empresas#inactivar", as: 'inactivar'
         get 'a' => "empresas#activar", as: 'activar'
@@ -85,7 +92,7 @@ Rails.application.routes.draw do
     end
 
     #Manejo controller areas
-    resources :areas, :path => 'ar' do
+    resources :areas, :path => 'area' do
       member do
         get 'i' => "areas#inactivar", as: 'inactivar'
         get 'a' => "areas#activar", as: 'activar'
@@ -106,12 +113,20 @@ Rails.application.routes.draw do
     get "personas_areas/search_areas_by_empresa"
 
     #Manejo de controller menu
-    resources :menus
-    get 'menu/inactivar/:id' => "menus#inactivar_menu", as: 'inactivar_menu'
+    resources :menus, :path => 'menu' do
+      member do
+        get 'i' => "menus#inactivar", as: 'inactivar'
+        get 'a' => "menus#activar", as: 'activar'
+      end
+    end
 
     #Manejo de controller Opciones
-    resources :opciones
-    get 'opcion/inactivar/:id' => "opciones#inactivar_opcion", as: 'inactivar_opcion'
+    resources :opciones, :path => 'opcion' do
+      member do
+        get 'i' => "opciones#inactivar", as: 'inactivar'
+        get 'a' => "opciones#activar", as: 'activar'
+      end
+    end
 
     #Manejo de controller menu por rol
     resources :menu_roles

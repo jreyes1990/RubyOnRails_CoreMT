@@ -17,9 +17,14 @@
 #
 class Opcion < ApplicationRecord
   belongs_to :menu
+  belongs_to :sub_opcion
+  
   has_many :menu_roles
   has_many :opcion_cas
-  validates_presence_of :nombre, :descripcion, :icono, :path, :controlador, message: ": este campo es obligatorio"
+
+  validates_presence_of :nombre, :menu_id, :descripcion, :icono, :path, :controlador, message: ": este campo es obligatorio"
+  validates :estado, inclusion: { in: %w(A I), message: "%{value} no es una opción válida, Verifique!!" } 
+  validates :nombre, uniqueness: {case_sensitive: false, scope: [:menu_id, :path, :controlador, :estado], message: "El nombre que intenta registrar ya existe" } 
 
   def nombre_con_menu
     "#{self.menu.nombre} - #{self.nombre}"

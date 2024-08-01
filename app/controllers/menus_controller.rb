@@ -1,10 +1,11 @@
 class MenusController < ApplicationController
+  include ManageStatus
   before_action :set_menu, only: %i[ show edit update destroy ]
   before_action :comprobar_permiso
 
   # GET /menus or /menus.json
   def index
-    @menus = Menu.where(:estado => 'A').order(:id)
+    @menus = Menu.where(estado: ['A', 'I']).order(:id)
   end
 
   # GET /menus/1 or /menus/1.json
@@ -26,13 +27,12 @@ class MenusController < ApplicationController
     @menu.estado = "A"
     @menu.user_created_id = current_user.id
 
-    respond_to do |format|
-      if @menu.save
-        format.html { redirect_to menus_path, notice: "Menú creado." }
-        format.json { render :show, status: :created, location: @menu }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @menu.errors, status: :unprocessable_entity }
+    ActiveRecord::Base.transaction do
+      guardar_con_manejo_de_excepciones(@menu, "No se pudo crear el menú", "Error de base de datos al crear el menú")
+
+      respond_to do |format|
+        format.html { redirect_to menus_url, notice: "El menú [ <strong>#{@menu.nombre.upcase}</strong> ] se ha creado correctamente.".html_safe }
+        format.json { render :show, status: :created, location: menus_url }
       end
     end
   end
@@ -40,13 +40,12 @@ class MenusController < ApplicationController
   # PATCH/PUT /menus/1 or /menus/1.json
   def update
     @menu.user_updated_id = current_user.id
-    respond_to do |format|
-      if @menu.update(menu_params)
-        format.html { redirect_to menus_path, notice: "Menú Actualizado." }
-        format.json { render :show, status: :ok, location: @menu }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @menu.errors, status: :unprocessable_entity }
+
+    ActiveRecord::Base.transaction do
+      actualizar_con_manejo_de_excepciones(@menu, menu_params, "No se pudo actualizar el menú", "Error de base de datos al actualizar el menú")
+      respond_to do |format|
+        format.html { redirect_to menus_url, notice: "El menú [ <strong>#{@menu.nombre.upcase}</strong> ] se ha actualizado correctamente.".html_safe }
+        format.json { render :show, status: :ok, location: menus_url }
       end
     end
   end
@@ -61,19 +60,12 @@ class MenusController < ApplicationController
   end
 
  # Inactivar menu
- def inactivar_menu
-  @menu = Menu.find(params[:id])
-  @menu.user_updated_id = current_user.id
-  @menu.estado = "I"
-    respond_to do |format|
-      if @menu.save
-        format.html { redirect_to menus_path, notice: "Menú Inctivado" }
-        format.json { render :show, status: :created, location: @menu }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @menu.errors, status: :unprocessable_entity }
-      end
-    end
+  def inactivar
+    change_status_to('I', Menu, params[:id], menus_url)
+  end
+
+  def activar
+    change_status_to('A', Menu, params[:id], menus_url)
   end
 
   private

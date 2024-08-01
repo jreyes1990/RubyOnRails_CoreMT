@@ -26,6 +26,8 @@ module EjemploTemplate
       g.view_specs false        # Evita la generación de archivos de prueba para vistas.
       g.helper_specs false      # Evita la generación de archivos de prueba para helpers.
       g.controller_specs false  # Evita la generación de archivos de prueba para controladores.
+      g.models_specs false      # Evita la generación de modelos.
+      g.requests_specs false    # Evita la generación de requests.
       g.routing_specs false     # Evita la generación de archivos de prueba para rutas.
       g.stylesheets false       # Evita la generación de archivos de estilos (CSS/SCSS).
       g.javascripts false       # Evita la generación de archivos de JavaScript.

@@ -35,7 +35,12 @@
               <th> Nombre Sidebar</th>
               <th> Descripción </th>
               <th class="text-center"> Estado </th>
-              <th class="text-center"> Opciones</th>
+              <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
+              <th class="text-center"></th>
+              <% end %>
+              <% if tiene_permiso("BOTON ACTIVAR/INACTIVAR REGISTRO", "VER") %>
+              <th class="text-center"></th>
+              <% end %>
             </tr>
           </thead>
           <tbody>
@@ -47,16 +52,34 @@
                 <td><%= menu.menu_sidebar %></td>
                 <td><%= menu.descripcion %></td>
                 <td class="text-center"><%= format_estado(menu.estado) %></td>
-
+                <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
                 <td class="text-center">
-                  <%= link_to edit_menu_path(menu), class: "btn btn-outline-info btn-sm " do %>
-                    <i class="fas fa-edit"></i>
-                  <%end%>
-
-                  <%= link_to  inactivar_menu_path(:id => menu.id), class: "btn btn-outline-danger btn-sm btn_inactivar_menu", data: { nombre: "#{menu.nombre}" } do %>
-                    <i class="fas fa-trash-alt"></i>
-                  <%end%>
+                  <% if menu.estado == "A" %>
+                    <%= link_to edit_menu_path(menu), class: "btn btn-outline-info btn-sm " do %>
+                      <i class="fas fa-edit"></i>
+                    <% end %>
+                  <% end %>
                 </td>
+                <% end %>
+                <% if tiene_permiso("BOTON ACTIVAR/INACTIVAR REGISTRO", "VER") %>
+                <td class="text-center">
+                  <% if menu.estado == "A" %>
+                    <%= link_to  inactivar_menu_path(:id => menu.id), 
+                        class: "btn btn-outline-danger btn-sm btn_status_menu", 
+                        data: { status: "Inactivar", nombre: "#{menu.nombre}" },
+                        "data-custom-class": "popover-danger", title: "INACTIVAR", "data-content": "#{menu.id} | #{menu.nombre.capitalize}" do %>
+                      <i class="fas fa-trash-alt"></i>
+                    <% end %>
+                  <% else %>
+                    <%= link_to  activar_menu_path(:id => menu.id), 
+                        class: "btn btn-outline-success btn-sm btn_status_menu", 
+                        data: { status: "Activar", nombre: "#{menu.nombre}" },
+                        "data-custom-class": "popover-success", title: "ACTIVAR", "data-content": "#{menu.id} | #{menu.nombre.capitalize}" do %>
+                      <i class="fas fa-trash-restore-alt"></i>
+                    <% end %>
+                  <% end %>
+                </td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>

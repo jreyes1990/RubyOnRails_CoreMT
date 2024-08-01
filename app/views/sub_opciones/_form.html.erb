@@ -1,0 +1,17 @@
+
+<%= simple_form_for(@sub_opcion) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :nombre %>
+    <%= f.input :descripcion %>
+    <%= f.input :user_created_id %>
+    <%= f.input :user_updated_id %>
+    <%= f.input :estado %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

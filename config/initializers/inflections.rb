@@ -159,10 +159,9 @@ end
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym 'RESTful'
   inflect.irregular "opcion", "opciones"
-  #inflect.singular "opcion", "opcion"
-  #inflect.plural "opcion", "opciones"
   inflect.irregular "opcion_ca", "opcion_cas"
   inflect.irregular "rol", "roles"  
+  inflect.irregular "sub_opcion", "sub_opciones"  
 
 =begin
   # IRREGULARES

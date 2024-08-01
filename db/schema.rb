@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_09_28_210232) do
+ActiveRecord::Schema.define(version: 2024_08_01_110232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "areas", id: :serial, comment: "Catálogo de Áreas por Empresa", force: :cascade do |t|
     t.bigint "empresa_id", null: false, comment: "Identificador de la empresa"
-    t.string "codigo_area", comment: "Identificador del código del área"
+    t.integer "codigo_area", comment: "Identificador del código del área"
     t.string "nombre", limit: 100, null: false, comment: "Nombre del área"
     t.string "descripcion", comment: "Descripción general del área"
     t.string "codigo_hex", default: "#232323", comment: "Identificador del color codigo hexadecimal para el área"
@@ -204,6 +204,7 @@ ActiveRecord::Schema.define(version: 2022_09_28_210232) do
 
   create_table "opciones", id: :serial, comment: "Catálogo de Opciones por Menú", force: :cascade do |t|
     t.bigint "menu_id", null: false, comment: "Identificador del menú"
+    t.bigint "sub_opcion_id", null: false, comment: "Identificador de la sub-opción"
     t.string "nombre", limit: 100, null: false, comment: "Nombre de la opción"
     t.string "descripcion", comment: "Descripción general de la opción"
     t.string "icono", limit: 50, comment: "Icono que identificará la opción"
@@ -213,14 +214,12 @@ ActiveRecord::Schema.define(version: 2022_09_28_210232) do
     t.string "componente_sidebar", comment: "Identificador el componente a utilizar en el sidebar"
     t.boolean "visible_sidebar", default: true, null: false, comment: "El componente será visible en el sidebar?"
     t.integer "posicion", comment: "Orden del componente a utilizar en el sidebar"
-    t.integer "sub_opcion_id", default: 1, comment: "Identificador de la subOpción"
-    t.string "nombre_sub_opcion", default: "OPCIONES:", comment: "Nombre de la subOpción"
     t.integer "user_created_id", null: false, comment: "Identificador de usuario al registrar en la aplicación web"
     t.integer "user_updated_id", comment: "Identificador de usuario al actualizar en la aplicación web"
     t.string "estado", limit: 10, default: "A", null: false, comment: "Estados: [A]: Activo  [I]: Inactivo"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false, comment: "Fecha y hora de creación del registro"
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false, comment: "Fecha y hora de la última actualización del registro"
-    t.index ["menu_id"], name: "idx_menu"
+    t.index ["menu_id", "sub_opcion_id"], name: "idx_opcion"
   end
 
   create_table "parametros", id: :serial, comment: "Módulo Configuración de parametros de usuario", force: :cascade do |t|
@@ -298,6 +297,16 @@ ActiveRecord::Schema.define(version: 2022_09_28_210232) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
+  create_table "sub_opciones", id: :serial, comment: "Catálogo de Sub-Opciones", force: :cascade do |t|
+    t.string "nombre", limit: 100, default: "OPCIONES:", null: false, comment: "Nombre de la sub-opción"
+    t.string "descripcion", comment: "Descripción general de la sub-opción"
+    t.integer "user_created_id", null: false, comment: "Identificador de usuario al registrar en la aplicación web"
+    t.integer "user_updated_id", comment: "Identificador de usuario al actualizar en la aplicación web"
+    t.string "estado", limit: 10, default: "A", null: false, comment: "Estados: [A]: Activo  [I]: Inactivo"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false, comment: "Fecha y hora de creación del registro"
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false, comment: "Fecha y hora de la última actualización del registro"
+  end
+
   create_table "users", comment: "Catálogo de usuarios", force: :cascade do |t|
     t.string "email", default: "", null: false, comment: "Corre electronico del usuario"
     t.string "encrypted_password", default: "", null: false, comment: "Password-Contraseña encriptada"
@@ -332,6 +341,7 @@ ActiveRecord::Schema.define(version: 2022_09_28_210232) do
   add_foreign_key "opcion_cas", "componentes", name: "fk_opcionCa_componente"
   add_foreign_key "opcion_cas", "opciones", name: "fk_opcionCa_opcion"
   add_foreign_key "opciones", "menus", name: "fk_opcion_menu"
+  add_foreign_key "opciones", "sub_opciones", name: "fk_opcion_subOpcion"
   add_foreign_key "parametros", "areas", name: "fk_parametro_area"
   add_foreign_key "parametros", "empresas", name: "fk_parametro_empresa"
   add_foreign_key "parametros", "users", name: "fk_parametro_user"
@@ -342,6 +352,36 @@ ActiveRecord::Schema.define(version: 2022_09_28_210232) do
   add_foreign_key "personas_areas", "personas", name: "fk_personaArea_persona"
   add_foreign_key "personas_areas", "roles", name: "fk_personaArea_rol"
 
+  create_view "personas_areas_views", sql_definition: <<-SQL
+      SELECT personas_areas.id,
+      personas_areas.persona_id,
+      personas_areas.area_id,
+      personas_areas.rol_id,
+      personas_areas.descripcion,
+      personas_areas.user_created_id,
+      personas_areas.user_updated_id,
+      personas_areas.estado,
+      personas_areas.created_at,
+      personas_areas.updated_at,
+      (((personas.nombre)::text || ' '::text) || (personas.apellido)::text) AS nombre_usuario,
+      personas.telefono AS telefono_usuario,
+      personas.user_id,
+      users.email AS email_usuario,
+      areas.codigo_area,
+      areas.nombre AS nombre_area,
+      areas.codigo_hex AS codigo_hex_area,
+      areas.empresa_id,
+      empresas.codigo_empresa,
+      empresas.nombre AS nombre_empresa,
+      roles.nombre AS nombre_rol,
+      roles.codigo_hex AS codigo_hex_rol
+     FROM (((((personas_areas
+       JOIN personas ON ((personas_areas.persona_id = personas.id)))
+       JOIN users ON ((personas.user_id = users.id)))
+       JOIN areas ON ((personas_areas.area_id = areas.id)))
+       JOIN empresas ON ((areas.empresa_id = empresas.id)))
+       LEFT JOIN roles ON ((personas_areas.rol_id = roles.id)));
+  SQL
   create_view "opcion_cas_views", sql_definition: <<-SQL
       SELECT oc.id,
       o.nombre AS opcion,

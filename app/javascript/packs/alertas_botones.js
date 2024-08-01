@@ -91,9 +91,6 @@ document.addEventListener("turbolinks:load", function () {
       });
     }
     
-    confirmStatus('.btn_inactivar_rol', 'Inactivar Rol', '¡Sí, inactivarlo!');
-    confirmStatus('.btn_inactivar_menu', 'Inactivar Menu', '¡Sí, inactivarlo!');
-    confirmStatus('.btn_inactivar_opcion', 'Inactivar Opción', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_menu_rol', 'Inactivar Menu Rol', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_atributo', 'Inactivar Atributo', '¡Sí, inactivarlo!');
     confirmStatus('.btn_inactivar_componente', 'Inactivar Componente', '¡Sí, inactivarlo!');
@@ -108,12 +105,16 @@ document.addEventListener("turbolinks:load", function () {
     confirmStatus('.btn_status_usuario');
     confirmStatus('.btn_status_persona_area');
     confirmStatus('.btn_status_rol');
+    confirmStatus('.btn_status_menu');
+    confirmStatus('.btn_status_opcion');
 
     confirmSave('.btn_event_empresa');
     confirmSave('.btn_event_area');
     confirmSave('.btn_event_usuario');
     confirmSave('.btn_event_persona_area');
     confirmSave('.btn_event_rol');
+    confirmSave('.btn_event_menu');
+    confirmSave('.btn_event_opcion');
 
     confirmSave('.btn_password_usuario');
     confirmSave('.btn_enviar_credencial');

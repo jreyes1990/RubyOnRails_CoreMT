@@ -21,8 +21,8 @@
           text: opcion.nombre, 
           codigo: opcion.menu_id,
           class_badge: "badge badge-success",
-          sub_opcion_id: opcion.sub_opcion_id,
-          sub_opcion: opcion.nombre_sub_opcion
+          sub_opcion_id: opcion.try(:sub_opcion_id),
+          sub_opcion: opcion.sub_opcion.try(:nombre)
         }
       end
     }

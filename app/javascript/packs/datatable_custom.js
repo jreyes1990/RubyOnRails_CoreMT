@@ -321,29 +321,26 @@ document.addEventListener("turbolinks:load", () => {
     '#datatable_menus',
     [],
     [
-      { responsivePriority: 1, targets: 0 },
-      { responsivePriority: 2, targets: 1 },
-      { responsivePriority: 3, targets: 2 },
-      { responsivePriority: 4, targets: 3 },
-      { responsivePriority: 5, targets: 4 },
-      { responsivePriority: 1, targets: 5 },
+      { responsivePriority: 1, targets: [0, -1, -2] },
+      { responsivePriority: 2, targets: [1, 2] },
+      { responsivePriority: 3, targets: [3, -3] },
+      { responsivePriority: 4, targets: 4 },
     ],
     opciones
   );
   //datatable para la vista de opciones
   agrupar_filas(
     '#datatable_opciones',
-    [],
     [
-      { responsivePriority: 1, targets: 0 },
-      { responsivePriority: 2, targets: 1 },
-      { responsivePriority: 3, targets: 2 },
-      { responsivePriority: 4, targets: 3 },
+      { columnIndex: 1, label: 'Menú ' } 
+    ],
+    [
+      { responsivePriority: 1, targets: [0, -1, -2] },
+      { responsivePriority: 2, targets: [2, 3] },
+      { responsivePriority: 3, targets: [5, -3] },
+      { responsivePriority: 4, targets: 6 },
       { responsivePriority: 5, targets: 4 },
-      { responsivePriority: 6, targets: 5 },
-      { responsivePriority: 7, targets: 6 },
-      { responsivePriority: 8, targets: 7 },
-      { responsivePriority: 1, targets: 8 },
+      { responsivePriority: 6, targets: 4 },
     ],
     opciones
   );
