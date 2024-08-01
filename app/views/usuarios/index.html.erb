@@ -65,16 +65,16 @@
                 <td class="text-center"><%= p.last_sign_in_at %></td>
                 <td class="text-center"><%= p.last_sign_in_ip %></td>
                 <td class="text-center"> <%= format_estado(p.estado) %> </td>
-                <td class="text-center">
                 <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
-                  <%= link_to edit_email_persona_path(:id => p.id), 
-                              class: "btn btn-outline-info btn-sm",
-                              remote: true, data: {toggle: "modal", target: "#modal-content-edit-email"},
-                              "data-custom-class": "popover-info", title: "ACTUALIZAR CORREO", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
-                    <i class="fas fa-user-edit"></i>
-                  <% end %>
+                <td class="text-center">
+                <%= link_to edit_email_persona_path(:id => p.id), 
+                            class: "btn btn-outline-info btn-sm",
+                            remote: true, data: {toggle: "modal", target: "#modal-content-edit-email"},
+                            "data-custom-class": "popover-info", title: "ACTUALIZAR CORREO", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
+                  <i class="fas fa-user-edit"></i>
                 <% end %>
                 </td>
+                <% end %>
                 <td class="text-center">
                 <% if (p.cambio_password =='f' || p.cambio_password == false) && p.estado == 'A' %>
                   <%= link_to conservar_password_persona_path(:id => p.id), 
@@ -102,25 +102,25 @@
                   <% end %> 
                 <% end %>
                 </td>
-                <td class="text-center">
                 <% if tiene_permiso("BOTON ACTIVAR/INACTIVAR REGISTRO", "VER") %>
-                  <% if p.estado == "A" %>
-                    <%= link_to inactivar_persona_path(:id => p.id), 
-                        class: "btn btn-outline-danger btn-sm btn_status_usuario", 
-                        data: { nombre: "#{p.nombre.upcase} #{p.apellido.upcase}" },
-                        "data-custom-class": "popover-danger", title: "INACTIVAR", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
-                      <i class="fas fa-trash-alt"></i>
-                    <% end %>
-                  <% else %>
-                    <%= link_to activar_persona_path(:id => p.id), 
-                        class: "btn btn-outline-success btn-sm btn_status_usuario", 
-                        data: { nombre: "#{p.nombre.upcase} #{p.apellido.upcase}" },
-                        "data-custom-class": "popover-success", title: "ACTIVAR", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
-                      <i class="fas fa-trash-restore-alt"></i>
-                    <% end %>
+                <td class="text-center">
+                <% if p.estado == "A" %>
+                  <%= link_to inactivar_persona_path(:id => p.id), 
+                      class: "btn btn-outline-danger btn-sm btn_status_usuario", 
+                      data: { nombre: "#{p.nombre.upcase} #{p.apellido.upcase}" },
+                      "data-custom-class": "popover-danger", title: "INACTIVAR", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
+                    <i class="fas fa-trash-alt"></i>
                   <% end %>
-                <% end%>
+                <% else %>
+                  <%= link_to activar_persona_path(:id => p.id), 
+                      class: "btn btn-outline-success btn-sm btn_status_usuario", 
+                      data: { nombre: "#{p.nombre.upcase} #{p.apellido.upcase}" },
+                      "data-custom-class": "popover-success", title: "ACTIVAR", "data-content": "#{p.nombre.capitalize} #{p.apellido.capitalize}" do %>
+                    <i class="fas fa-trash-restore-alt"></i>
+                  <% end %>
+                <% end %>
                 </td>
+                <% end%>
               </tr>
             <% end %>
           </tbody>
