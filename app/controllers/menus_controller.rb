@@ -1,7 +1,7 @@
 class MenusController < ApplicationController
   before_action :set_menu, only: %i[ show edit update destroy ]
   before_action :comprobar_permiso
-  
+
   # GET /menus or /menus.json
   def index
     @menus = Menu.where(:estado => 'A').order(:id)
@@ -84,6 +84,6 @@ class MenusController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def menu_params
-      params.require(:menu).permit(:nombre, :descripcion, :icono)
+      params.require(:menu).permit(Menu.attribute_names.map(&:to_sym))
     end
 end

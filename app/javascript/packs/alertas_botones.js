@@ -113,6 +113,7 @@ document.addEventListener("turbolinks:load", function () {
     confirmSave('.btn_event_area');
     confirmSave('.btn_event_usuario');
     confirmSave('.btn_event_persona_area');
+    confirmSave('.btn_event_rol');
 
     confirmSave('.btn_password_usuario');
     confirmSave('.btn_enviar_credencial');

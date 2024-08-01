@@ -50,8 +50,8 @@
                 <td> <%= rol.nombre %> </td>
                 <td> <%= rol.descripcion %> </td>
                 <td class="text-center"> <%= format_estado(rol.estado) %> </td>
-                <td class="text-center">
                 <% if tiene_permiso("BOTON EDITAR REGISTRO", "VER") %>
+                <td class="text-center">
                   <% if rol.estado == "A" %>
                     <%= link_to edit_rol_path(rol), 
                         class: "btn btn-outline-info btn-sm",
@@ -59,10 +59,10 @@
                       <i class="fas fa-edit"></i>
                     <% end %>
                   <% end %>
-                <% end %>
                 </td>
-                <td class="text-center">
+                <% end %>
                 <% if tiene_permiso("BOTON ELIMINAR REGISTRO", "VER") %>
+                <td class="text-center">
                   <% if rol.estado == "A" %>
                     <%= link_to  inactivar_rol_path(:id => rol.id), 
                         class: "btn btn-outline-danger btn-sm btn_status_rol", 
@@ -78,8 +78,8 @@
                       <i class="fas fa-trash-restore-alt"></i>
                     <% end %>
                   <% end %>
-                <% end %>
                 </td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>
