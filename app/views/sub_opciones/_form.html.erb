@@ -9,7 +9,19 @@
       <div class="row">
         <div class="col-md-12">
           <div class="form-inputs">
-            <%= f.input :nombre %>
+            <div class="row">
+              <div class="col-md-6">
+                <%= f.input :nombre %>
+              </div>
+              <div class="col-md">
+                <%= f.input :posicion, label: "Orden" %>
+              </div>
+              <div class="col-md-auto text-center">
+                <%= f.label :visible_sidebar, label: "Es visible en Sidebar ?" %>
+                <%= f.input :visible_sidebar, as: :boolean, label: false, input_html: { class: 'form-check-input', 'data-toggle': 'toggle' }, label_html: { class: 'form-check-label' } %>
+                <%= f.input :visible_sidebar, as: :boolean, label: false, input_html: { class: 'form-check-input', 'data-toggle': 'switch' }, label_html: { class: 'form-check-label' } %>
+              </div>
+            </div>
             <%= f.input :descripcion, as: :text, input_html: {rows: 3} %>
           </div>
         </div>
@@ -18,7 +30,7 @@
 
     <div class="card-footer shadow bg-transparent" style="background-color: #efefef !important;">
       <div class="col-md-12 text-center">
-        <%= link_to @retorno, class: "btn btn-danger btn-sm mt-2" do %>
+        <%= link_to sub_opciones_path, class: "btn btn-danger btn-sm mt-2" do %>
           <span class="icon text-red-50">
             <i class="fas fa-arrow-circle-left"></i>
           </span>

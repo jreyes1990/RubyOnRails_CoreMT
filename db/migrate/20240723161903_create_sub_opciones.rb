@@ -4,6 +4,8 @@ class CreateSubOpciones < ActiveRecord::Migration[6.0]
       t.serial :id, null: false, comment: "Identificador de la llave primaria"
       t.string :nombre, limit: 100, null: false, default: "OPCIONES:", comment: "Nombre de la sub-opción"
       t.string :descripcion, null: true, comment: "Descripción general de la sub-opción"
+      t.boolean :visible_sidebar, null: false, default: true, comment: "La sub-opción será visible en el sidebar?"
+      t.integer :posicion, null: true, comment: "Orden de la sub-opción a utilizar en el sidebar"
       t.integer :user_created_id, null: false, comment: "Identificador de usuario al registrar en la aplicación web"
       t.integer :user_updated_id, null: true, comment: "Identificador de usuario al actualizar en la aplicación web"
       t.string :estado, limit: 10, null: false, default: "A", comment: "Estados: [A]: Activo  [I]: Inactivo"  

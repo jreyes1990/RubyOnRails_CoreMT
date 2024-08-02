@@ -118,3 +118,7 @@ gem 'caxlsx_rails'
 
 #GEMA PARA PROCESAMIENTO DE ARCHIVOS EXCEL
 gem "roo"
+
+# GEMA PARA USAR BOOTSTRAP SWITCH CON SIMPLE_FORM
+gem 'bootstrap-switch-rails'
+gem 'bootstrap-toggle-rails'

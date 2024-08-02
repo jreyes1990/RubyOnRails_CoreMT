@@ -5,6 +5,8 @@ require("@rails/activestorage").start()
 require('datatables.net-bs4')
 require('datatables.net-responsive')
 //= require active_admin_datetimepicker
+//= require bootstrap-toggle
+//= require bootstrap-switch
 
 import 'bootstrap/dist/js/bootstrap'
 import 'bootstrap/dist/css/bootstrap'
@@ -169,6 +171,24 @@ document.addEventListener("turbolinks:load", () => {
     width: '100%'
   });
 
+  // Inicializar Bootstrap Toggle:
+  $("[data-toggle='toggle']").bootstrapToggle({
+    on: 'SI',
+    off: 'NO',
+    onstyle: 'success',
+    offstyle: 'danger',
+    size: 'small'
+  });
+
+  // Inicializar Bootstrap Switch:
+  $("[data-toggle='switch']").bootstrapSwitch({
+    on: 'SI',
+    off: 'NO',
+    onstyle: 'success',
+    offstyle: 'danger',
+    size: 'small',
+    style: 'ios'
+  });
 
   // Configuracion para combos dinamicos menu-opciones
   var opcion = $('#menu_rol_opciones_id').html()

@@ -300,6 +300,8 @@ ActiveRecord::Schema.define(version: 2024_08_01_110232) do
   create_table "sub_opciones", id: :serial, comment: "Catálogo de Sub-Opciones", force: :cascade do |t|
     t.string "nombre", limit: 100, default: "OPCIONES:", null: false, comment: "Nombre de la sub-opción"
     t.string "descripcion", comment: "Descripción general de la sub-opción"
+    t.boolean "visible_sidebar", default: true, null: false, comment: "La sub-opción será visible en el sidebar?"
+    t.integer "posicion", comment: "Orden de la sub-opción a utilizar en el sidebar"
     t.integer "user_created_id", null: false, comment: "Identificador de usuario al registrar en la aplicación web"
     t.integer "user_updated_id", comment: "Identificador de usuario al actualizar en la aplicación web"
     t.string "estado", limit: 10, default: "A", null: false, comment: "Estados: [A]: Activo  [I]: Inactivo"
