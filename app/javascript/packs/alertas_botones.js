@@ -107,6 +107,8 @@ document.addEventListener("turbolinks:load", function () {
     confirmStatus('.btn_status_rol');
     confirmStatus('.btn_status_menu');
     confirmStatus('.btn_status_opcion');
+    confirmStatus('.btn_status_sub_opcion');
+    confirmStatus('.btn_status_menu_rol');
 
     confirmSave('.btn_event_empresa');
     confirmSave('.btn_event_area');
@@ -115,6 +117,7 @@ document.addEventListener("turbolinks:load", function () {
     confirmSave('.btn_event_rol');
     confirmSave('.btn_event_menu');
     confirmSave('.btn_event_opcion');
+    confirmSave('.btn_event_sub_opcion');
 
     confirmSave('.btn_password_usuario');
     confirmSave('.btn_enviar_credencial');

@@ -1,17 +1,41 @@
-
 <%= simple_form_for(@sub_opcion) do |f| %>
   <%= f.error_notification %>
   <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <div class="card shadow">
+    <div class="card-header py-3">
+      <h5 class="m-0 font-weight-bold text-primary">Gestión de Sub-Opción</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-inputs">
+            <%= f.input :nombre %>
+            <%= f.input :descripcion, as: :text, input_html: {rows: 3} %>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div class="form-inputs">
-    <%= f.input :nombre %>
-    <%= f.input :descripcion %>
-    <%= f.input :user_created_id %>
-    <%= f.input :user_updated_id %>
-    <%= f.input :estado %>
-  </div>
+    <div class="card-footer shadow bg-transparent" style="background-color: #efefef !important;">
+      <div class="col-md-12 text-center">
+        <%= link_to @retorno, class: "btn btn-danger btn-sm mt-2" do %>
+          <span class="icon text-red-50">
+            <i class="fas fa-arrow-circle-left"></i>
+          </span>
+          <span class="text">CANCELAR</span>
+        <% end %>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+        <% if tiene_permiso("BOTON REGISTRAR", "VER") %>
+          <%= button_tag f.submit, 
+              class: "btn btn-success btn-sm mt-2 btn_event_sub_opcion", 
+              data: { evento: "#{titulo_sub_opcion}", nombre: "#{@sub_opcion.nombre}" } do %>
+            <span class="text"><%= titulo_sub_opcion.upcase %></span>
+            <span class="icon text-green-50">
+              <i class="fas fa-edit"></i>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
   </div>
 <% end %>

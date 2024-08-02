@@ -1,10 +1,11 @@
 class MenuRolesController < ApplicationController
+  include ManageStatus
   before_action :set_menu_rol, only: %i[ show edit update destroy ]
   before_action :comprobar_permiso
-  
+
   # GET /menu_roles or /menu_roles.json
   def index
-    @menu_roles = MenuRol.where(:estado => 'A').order(:id)
+    @menu_roles = MenuRol.where(estado: ['A', 'I']).order(:id)
   end
 
   # GET /menu_roles/1 or /menu_roles/1.json
@@ -27,9 +28,9 @@ class MenuRolesController < ApplicationController
     @menu_rol.rol_id =  params[:menu_rol][:roles_id]
     @menu_rol.opcion_id =  params[:menu_rol][:opciones_id]
     @menu_rol.estado = "A"
-    
+
     @menu_rol.user_created_id = current_user.id
- 
+
     respond_to do |format|
       if @menu_rol.save
         format.html { redirect_to menu_roles_path, notice: "Asignación de Menú por Rol creada" }
@@ -68,20 +69,12 @@ class MenuRolesController < ApplicationController
   end
 
   # Inactivar area
-  def inactivar_menurol
-    @menu_rol = MenuRol.find(params[:id])
-    @menu_rol.user_updated_id = current_user.id
-    @menu_rol.estado = "I"
-    respond_to do |format|
-      if @menu_rol.save
-        format.html { redirect_to menu_roles_path, notice: "Asignación de Menú por Rol Inactivada" }
-        format.json { render :show, status: :created, location: @area }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @area.errors, status: :unprocessable_entity }
-      end
-    end
+  def inactivar
+    change_status_to('I', MenuRol, params[:id], menu_roles_url)
+  end
 
+  def inactivar
+    change_status_to('A', MenuRol, params[:id], menu_roles_url)
   end
 
   private
@@ -89,7 +82,7 @@ class MenuRolesController < ApplicationController
     def set_menu_rol
       @menu_rol = MenuRol.find(params[:id])
     end
-   
+
     # Only allow a list of trusted parameters through.
     def menu_rol_params
       params.require(:menu_rol).permit(:roles_id, :opciones_id, :menu_padre)

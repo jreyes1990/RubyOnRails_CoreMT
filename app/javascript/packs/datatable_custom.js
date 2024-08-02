@@ -344,6 +344,17 @@ document.addEventListener("turbolinks:load", () => {
     ],
     opciones
   );
+  //datatable para la vista de sub-opciones
+  agrupar_filas(
+    '#datatable_sub_opciones',
+    [],
+    [
+      { responsivePriority: 1, targets: [0, -1, -2] },
+      { responsivePriority: 2, targets: 1 },
+      { responsivePriority: 3, targets: [2, -3] },
+    ],
+    opciones
+  );
   //datatable para la vista de atributos
   agrupar_filas(
     '#datatable_atributos',
@@ -361,15 +372,13 @@ document.addEventListener("turbolinks:load", () => {
   //datatable para la vista de menu rol
   agrupar_filas(
     '#datatable_menu_rol',
-    [],
     [
-      { responsivePriority: 1, targets: 0 },
-      { responsivePriority: 2, targets: 1 },
-      { responsivePriority: 3, targets: 2 },
-      { responsivePriority: 4, targets: 3 },
-      { responsivePriority: 5, targets: 4 },
-      { responsivePriority: 1, targets: 5 },
-
+      { columnIndex: 1, label: 'Rol ' },
+      { columnIndex: 2, label: 'Menú ' } 
+    ],
+    [
+      { responsivePriority: 1, targets: [0, -1, -2] },
+      { responsivePriority: 2, targets: [3, -3] },
     ],
     opciones
   );

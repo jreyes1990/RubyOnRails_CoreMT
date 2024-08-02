@@ -1,12 +1,4 @@
 Rails.application.routes.draw do
-
-  resources :sub_opciones, :path => 'opcion' do
-    member do
-      get 'i' => "opciones#inactivar", as: 'inactivar'
-      get 'a' => "opciones#activar", as: 'activar'
-    end
-  end
-  
   #Manejo de gema Devise
   devise_for :users
   root 'home#index'
@@ -120,6 +112,13 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :sub_opciones, :path => 'sub_opcion' do
+      member do
+        get 'i' => "sub_opciones#inactivar", as: 'inactivar'
+        get 'a' => "sub_opciones#activar", as: 'activar'
+      end
+    end
+
     #Manejo de controller Opciones
     resources :opciones, :path => 'opcion' do
       member do
@@ -129,8 +128,12 @@ Rails.application.routes.draw do
     end
 
     #Manejo de controller menu por rol
-    resources :menu_roles
-    get 'menu_rol/inactivar/:id' => "menu_roles#inactivar_menurol", as: 'inactivar_menurol'
+    resources :menu_roles, :path => 'menu_rol' do
+      member do
+        get 'i' => "menu_roles#inactivar", as: 'inactivar'
+        get 'a' => "menu_roles#activar", as: 'activar'
+      end
+    end
 
     #Manejo de controller atributo
     resources :atributos

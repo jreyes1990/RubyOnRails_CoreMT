@@ -61,6 +61,14 @@ class SubOpcionesController < ApplicationController
     end
   end
 
+  def inactivar
+    change_status_to('I', SubOpcion, params[:id], sub_opciones_url)
+  end
+
+  def activar
+    change_status_to('A', SubOpcion, params[:id], sub_opciones_url)
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_sub_opcion
@@ -69,6 +77,6 @@ class SubOpcionesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def sub_opcion_params
-      params.require(:sub_opcion).permit(:nombre, :descripcion, :user_created_id, :user_updated_id, :estado)
+      params.require(:sub_opcion).permit(SubOpcion.attribute_names.map(&:to_sym))
     end
 end
