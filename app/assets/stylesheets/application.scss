@@ -15,18 +15,3 @@
  */
 
 @import "bootstrap-toggle";
-@import "bootstrap-switch";
-
- // Estilos personalizados para el toggle switch
- .toggle.ios, 
- .toggle-on.ios, 
- .toggle-off.ios { 
-   border-radius: 20px; 
- }
- 
- .toggle.ios 
- .toggle-handle { 
-   border-radius: 20px; 
-   border-color: rgb(255, 255, 255); 
-   background-color: rgb(255, 255, 255);
- }

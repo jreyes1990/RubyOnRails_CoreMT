@@ -18,8 +18,7 @@
               </div>
               <div class="col-md-auto text-center">
                 <%= f.label :visible_sidebar, label: "Es visible en Sidebar ?" %>
-                <%= f.input :visible_sidebar, as: :boolean, label: false, input_html: { class: 'form-check-input', 'data-toggle': 'toggle' }, label_html: { class: 'form-check-label' } %>
-                <%= f.input :visible_sidebar, as: :boolean, label: false, input_html: { class: 'form-check-input', 'data-toggle': 'switch' }, label_html: { class: 'form-check-label' } %>
+                <%= f.input :visible_sidebar, as: :boolean, label: false, input_html: { class: 'form-check-input', data: {toggle: 'toggle'} } %>
               </div>
             </div>
             <%= f.input :descripcion, as: :text, input_html: {rows: 3} %>

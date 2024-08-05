@@ -6,7 +6,6 @@ require('datatables.net-bs4')
 require('datatables.net-responsive')
 //= require active_admin_datetimepicker
 //= require bootstrap-toggle
-//= require bootstrap-switch
 
 import 'bootstrap/dist/js/bootstrap'
 import 'bootstrap/dist/css/bootstrap'
@@ -177,18 +176,28 @@ document.addEventListener("turbolinks:load", () => {
     off: 'NO',
     onstyle: 'success',
     offstyle: 'danger',
-    size: 'small'
+    size: 'small',
+    width: '90',
+    height: 'auto'
   });
 
-  // Inicializar Bootstrap Switch:
-  $("[data-toggle='switch']").bootstrapSwitch({
-    on: 'SI',
-    off: 'NO',
-    onstyle: 'success',
-    offstyle: 'danger',
-    size: 'small',
-    style: 'ios'
-  });
+  // Elimina la clase form-check de todos los toggles
+  $(".toggle").parent().removeClass("form-check");
+
+  // Aplicar el estilo con un pequeño retraso y mayor especificidad
+  $('.form-check-input[data-toggle="toggle"]')
+  .parent()
+  .css('border-radius', '20px')
+  .css('padding', '10px')
+  .hover(
+    function() {
+      $(this).css('box-shadow', '0px 2px 5px rgb(29, 82, 44)');
+    },
+    function() {
+      $(this).css('box-shadow', 'none');
+    }
+  );
+  
 
   // Configuracion para combos dinamicos menu-opciones
   var opcion = $('#menu_rol_opciones_id').html()

@@ -24,8 +24,8 @@
                 <% end %>
                 <br />
                 <div class="field">
-                  <%= form.label :Menu %>
-                  <%= form.collection_select(:menu_id, Menu.where(:estado => 'A'), :id, :nombre, {:prompt => "Seleccione un Menú"}, {:class => "form-control select2", required: true, autofocus: true}) %>
+                  <%= form.label "Menú" %>
+                  <%= form.collection_select(:menu_id, Menu.where(:estado => 'A'), :id, :nombre, {:prompt => "Seleccione un Menú"}, {:class => "form-control select2", required: true, autofocus: false}) %>
                 </div>
                 <br />
                 <div class="field">

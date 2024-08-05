@@ -120,5 +120,4 @@ gem 'caxlsx_rails'
 gem "roo"
 
 # GEMA PARA USAR BOOTSTRAP SWITCH CON SIMPLE_FORM
-gem 'bootstrap-switch-rails'
 gem 'bootstrap-toggle-rails'
